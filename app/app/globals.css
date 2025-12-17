@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf3e0;  /* Vintage cream */
+  --foreground: #5d4e37;  /* Warm vintage brown */
 }
 
 @theme inline {
@@ -11,13 +11,13 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Custom color palette */
-  --color-ink-black: #071e22ff;
-  --color-deep-ocean: #1d7874ff;
-  --color-jungle-teal: #679289ff;
-  --color-peach-glow: #f4c095ff;
-  --color-racing-red: #ee2e31ff;
-  --color-light-peach: #ffecd1ff;
+  /* Vintage Classic Color Palette - Light, Fun, and Jovial */
+  --color-ink-black: #5d4e37ff;        /* Warm vintage brown (was dark navy) */
+  --color-deep-ocean: #d4a574ff;       /* Golden honey/mustard (was deep teal) */
+  --color-jungle-teal: #b5c99aff;      /* Soft sage green (was muted teal) */
+  --color-peach-glow: #d8a7b1ff;       /* Dusty rose pink (was warm peach) */
+  --color-racing-red: #e89f88ff;       /* Vintage coral accent (was bright red) */
+  --color-light-peach: #faf3e0ff;      /* Cream paper background (was light peach) */
 }
 
 @media (prefers-color-scheme: dark) {
