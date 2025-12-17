@@ -16,7 +16,7 @@ export default function Home() {
               <div className="rounded-md shadow">
                 <a
                   href="/account/signup"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-ink-black bg-deep-ocean hover:bg-jungle-teal md:py-4 md:text-lg md:px-10"
+                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-deep-ocean hover:bg-jungle-teal md:py-4 md:text-lg md:px-10"
                 >
                   Create an Event
                 </a>
@@ -24,7 +24,7 @@ export default function Home() {
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                 <a
                   href="/events"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-jungle-teal text-base font-medium rounded-md text-jungle-teal bg-peach-glow hover:bg-peach-glow hover:text-ink-black md:py-4 md:text-lg md:px-10"
+                  className="w-full flex items-center justify-center px-8 py-3 border border-jungle-teal text-base font-medium rounded-md text-ink-black bg-peach-glow hover:bg-light-peach hover:text-ink-black md:py-4 md:text-lg md:px-10"
                 >
                   Browse Events
                 </a>
@@ -54,7 +54,7 @@ export default function Home() {
                     <div>
                       <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-ink-black"
+                          className="h-6 w-6 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -85,7 +85,7 @@ export default function Home() {
                     <div>
                       <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-ink-black"
+                          className="h-6 w-6 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -116,7 +116,7 @@ export default function Home() {
                     <div>
                       <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-ink-black"
+                          className="h-6 w-6 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -164,7 +164,7 @@ export default function Home() {
           </p>
           <a
             href="/account/signup"
-            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-ink-black bg-deep-ocean hover:bg-jungle-teal sm:w-auto"
+            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-deep-ocean hover:bg-jungle-teal sm:w-auto"
           >
             Get Started Free
           </a>

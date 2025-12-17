@@ -55,7 +55,7 @@ export default function EventsPage() {
         <h1 className="text-2xl font-bold text-ink-black">Events</h1>
         <Link
           href="/events/create"
-          className="bg-deep-ocean text-ink-black px-4 py-2 rounded-md hover:bg-jungle-teal font-medium"
+          className="bg-deep-ocean text-white px-4 py-2 rounded-md hover:bg-jungle-teal font-medium"
         >
           Create Event
         </Link>
