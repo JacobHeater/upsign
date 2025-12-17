@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiClient } from '../../../lib/api';
 
 interface SignupFormData {
   firstName: string;
@@ -45,27 +46,17 @@ export default function SignupPage() {
         .map((a) => a.trim())
         .filter((a) => a);
 
-      const response = await fetch('/api/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
-          phoneNumber: formData.phoneNumber,
-          allergies: allergiesArray,
-          verified: false,
-          locked: false,
-          lastLogin: null,
-        }),
+      await apiClient.createUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
+        phoneNumber: formData.phoneNumber,
+        allergies: allergiesArray,
+        verified: false,
+        locked: false,
+        lastLogin: null,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create account');
-      }
 
       // After signup, redirect to login
       router.push('/auth/login?message=Account created successfully. Please log in.');
@@ -187,10 +178,7 @@ export default function SignupPage() {
       <div className="mt-6 text-center">
         <p className="text-sm text-jungle-teal">
           Already have an account?{' '}
-          <Link
-            href="/account/login"
-            className="font-medium text-deep-ocean hover:text-jungle-teal"
-          >
+          <Link href="/account/login" className="font-medium text-deep-ocean hover:text-racing-red">
             Log in
           </Link>
         </p>

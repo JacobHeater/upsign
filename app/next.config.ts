@@ -1,14 +1,14 @@
 import type { NextConfig } from 'next';
 
+const isCodespace = process.env.CODESPACE_NAME;
+const apiUrl = isCodespace
+  ? `https://${process.env.CODESPACE_NAME}-3002.app.github.dev`
+  : 'http://localhost:3002';
+
 const nextConfig: NextConfig = {
   output: 'standalone',
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3000/api/:path*',
-      },
-    ];
+  env: {
+    NEXT_PUBLIC_API_URL: apiUrl,
   },
 };
 

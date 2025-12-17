@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user/router';
 import eventRouter from './routes/event/router';
@@ -10,23 +11,23 @@ import { authMiddleware } from './middleware/auth';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', authMiddleware);
-
+app.use('/api', accountRouter);
 app.use('/api', userRouter);
 app.use('/api', eventRouter);
 app.use('/api', eventSegmentRouter);
 app.use('/api', eventAttendeeRouter);
 app.use('/api', eventAttendeeContributionRouter);
-app.use('/api', accountRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 if (require.main === module) {
   app.listen(PORT, () => {

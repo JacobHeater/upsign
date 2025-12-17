@@ -17,9 +17,15 @@ services:
   api:
     build: ./api
     ports:
-      - '3001:3000'
+      - '3001:3002'
     environment:
       - DATABASE_URL=postgresql://johndoe:randompassword@postgres:5432/mydb?schema=public
+      - JWT_SECRET=your-secret-key
+      - TOTP_WINDOW=2
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - PORT=3002
     depends_on:
       - postgres
     networks:
@@ -29,6 +35,9 @@ services:
     build: ./app
     ports:
       - '3000:3000'
+    environment:
+      - JWT_SECRET=your-secret-key
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
     depends_on:
       - api
     networks:

@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { apiClient } from '../../../lib/api';
 
 function LoginForm() {
   const router = useRouter();
@@ -22,18 +23,7 @@ function LoginForm() {
     setError(null);
 
     try {
-      const response = await fetch('/api/account/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phone }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send OTP');
-      }
-
+      await apiClient.sendOtp(phone);
       setStep('otp');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -48,18 +38,7 @@ function LoginForm() {
     setError(null);
 
     try {
-      const response = await fetch('/api/account/login/otp/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ otp }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Invalid OTP');
-      }
-
+      await apiClient.verifyOtp(phone, otp);
       // Redirect to home or events page
       router.push(returnUrl);
     } catch (err) {

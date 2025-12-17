@@ -12,6 +12,6 @@ RUN npm run build
 
 RUN npm prune --production
 
-EXPOSE 3000
+EXPOSE 3002
 
 CMD ["npm", "start"]

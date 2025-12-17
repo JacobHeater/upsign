@@ -35,7 +35,7 @@ export default function RootLayout({
         <footer className="bg-ink-black border-t border-jungle-teal mt-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="text-center text-sm text-peach-glow">
-              © 2025 UpSign. Professional event management platform.
+              &copy; {new Date().getFullYear()} UpSign. The better way to manage events.
             </div>
           </div>
         </footer>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiClient } from '../../../lib/api';
 
 interface EventFormData {
   name: string;
@@ -33,25 +34,10 @@ export default function CreateEventPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          date: new Date(formData.date).toISOString(),
-        }),
+      await apiClient.createEvent({
+        ...formData,
+        date: new Date(formData.date).toISOString(),
       });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push('/account/login');
-          return;
-        }
-        throw new Error('Failed to create event');
-      }
-
       router.push('/events');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

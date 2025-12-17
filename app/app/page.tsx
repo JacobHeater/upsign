@@ -103,8 +103,8 @@ export default function Home() {
                       Claim &amp; Sign Up
                     </h3>
                     <p className="mt-5 text-base text-peach-glow">
-                      Guests sign up for items they want to bring. No accounts required—just pick a
-                      dish and add your name.
+                      Guests tell hosts what they're bringing. A simple way to track guest
+                      contributions at a glance.
                     </p>
                   </div>
                 </div>
@@ -140,8 +140,8 @@ export default function Home() {
                       See It All
                     </h3>
                     <p className="mt-5 text-base text-peach-glow">
-                      Everyone can see who's bringing what at a glance. No more group text chaos or
-                      spreadsheet nightmares.
+                      Everyone can see who's bringing what. No more group text chaos or spreadsheet
+                      nightmares.
                     </p>
                   </div>
                 </div>
@@ -159,14 +159,13 @@ export default function Home() {
             <span className="block">Let UpSign handle the coordination.</span>
           </h2>
           <p className="mt-4 text-lg leading-6 text-peach-glow">
-            Free, simple, and no sign-up required for guests. Your next potluck just got a lot
-            easier.
+            Free, simple, and easy sign-up for guests. Your next event just got a lot easier.
           </p>
           <a
             href="/account/signup"
             className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-deep-ocean hover:bg-jungle-teal sm:w-auto"
           >
-            Get Started Free
+            Get Started Now
           </a>
         </div>
       </section>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { apiClient } from '../../lib/api';
 
 interface Event {
   id: string;
@@ -24,15 +25,7 @@ export default function EventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/event');
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push('/account/login');
-          return;
-        }
-        throw new Error('Failed to fetch events');
-      }
-      const data = await response.json();
+      const data = await apiClient.getEvents();
       setEvents(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
