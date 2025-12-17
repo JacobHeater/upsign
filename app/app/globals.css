@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #faf3e0;  /* Vintage cream */
-  --foreground: #5d4e37;  /* Warm vintage brown */
+  --background: #faf3e1;  /* Tuscan Sun light */
+  --foreground: #264653;  /* Charcoal Blue */
 }
 
 @theme inline {
@@ -11,13 +11,13 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Vintage Classic Color Palette - Light, Fun, and Jovial */
-  --color-ink-black: #5d4e37ff;        /* Warm vintage brown (was dark navy) */
-  --color-deep-ocean: #d4a574ff;       /* Golden honey/mustard (was deep teal) */
-  --color-jungle-teal: #b5c99aff;      /* Soft sage green (was muted teal) */
-  --color-peach-glow: #d8a7b1ff;       /* Dusty rose pink (was warm peach) */
-  --color-racing-red: #e89f88ff;       /* Vintage coral accent (was bright red) */
-  --color-light-peach: #faf3e0ff;      /* Cream paper background (was light peach) */
+  /* Custom Color Palette - Warm Vintage with Strong Contrast */
+  --color-ink-black: #264653ff;        /* Charcoal Blue - dark text */
+  --color-deep-ocean: #2a9d8fff;       /* Verdigris - teal accent */
+  --color-jungle-teal: #6cd8cbff;      /* Verdigris Light - soft teal */
+  --color-peach-glow: #f4a261ff;       /* Sandy Brown - warm orange */
+  --color-racing-red: #e76f51ff;       /* Burnt Peach - coral accent */
+  --color-light-peach: #faf3e1ff;      /* Tuscan Sun Light - cream background */
 }
 
 @media (prefers-color-scheme: dark) {
