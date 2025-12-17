@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  firstName   String
+  lastName    String
+  allergies   String[]
+  email       String    @unique
+  dateOfBirth DateTime
+  phoneNumber String
+  verified    Boolean   @default(false)
+  locked      Boolean   @default(false)
+  lastLogin   DateTime?
+
+  attendances EventAttendee[]
+}
+
+model Event {
+  id       String   @id @default(cuid())
+  name     String
+  date     DateTime
+  location String
+
+  segments EventSegment[]
+}
+
+model EventSegment {
+  id      String @id @default(cuid())
+  name    String
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  attendees EventAttendee[]
+}
+
+model EventAttendee {
+  id        String       @id @default(cuid())
+  userId    String
+  segmentId String
+  user      User         @relation(fields: [userId], references: [id])
+  segment   EventSegment @relation(fields: [segmentId], references: [id])
+
+  contributions EventAttendeeContribution[]
+}
+
+model EventAttendeeContribution {
+  id          String        @id @default(cuid())
+  item        String
+  description String
+  quantity    Int
+  attendeeId  String
+  attendee    EventAttendee @relation(fields: [attendeeId], references: [id])
+}

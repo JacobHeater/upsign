@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: johndoe
+      POSTGRES_PASSWORD: randompassword
+      POSTGRES_DB: mydb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - upsign-network
+
+  api:
+    build: ./api
+    ports:
+      - '3001:3000'
+    environment:
+      - DATABASE_URL=postgresql://johndoe:randompassword@postgres:5432/mydb?schema=public
+    depends_on:
+      - postgres
+    networks:
+      - upsign-network
+
+  app:
+    build: ./app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    networks:
+      - upsign-network
+
+volumes:
+  postgres_data:
+
+networks:
+  upsign-network:
+    driver: bridge
