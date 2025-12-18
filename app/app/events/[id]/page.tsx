@@ -92,51 +92,57 @@ export default function ViewEventPage() {
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-card rounded-lg shadow-lg p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-card-foreground text-center mb-2">📅 {event.name}</h1>
-            <p className="text-secondary text-center">Event Details</p>
+        <div className="bg-card rounded-xl shadow-xl p-8 border-2 border-primary/30">
+          <div className="text-center mb-8">
+            <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border-2 border-primary/30 rounded-full">
+              <span className="text-primary font-semibold text-sm">Event Details</span>
+            </div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">📅 {event.name}</h1>
+            <p className="text-foreground/70">View and manage event information</p>
           </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">
-                Event Date & Time
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-background/50 p-4 rounded-lg border-2 border-accent/20">
+              <label className="block text-sm font-medium text-foreground/70 mb-2">
+                📅 Event Date & Time
               </label>
-              <p className="text-card-foreground">{event.date.toLocaleString()}</p>
+              <p className="text-foreground font-semibold">{event.date.toLocaleString()}</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Location</label>
-              <p className="text-card-foreground">{event.location}</p>
+            <div className="bg-background/50 p-4 rounded-lg border-2 border-accent/20">
+              <label className="block text-sm font-medium text-foreground/70 mb-2">📍 Location</label>
+              <p className="text-foreground font-semibold">{event.location}</p>
             </div>
+          </div>
 
             {event.segments && event.segments.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold text-foreground mb-4">Segments</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-6 border-b-2 border-accent/30 pb-2">Event Segments</h2>
                 {event.segments.map((segment: EventSegment) => {
                   const isAttending = segment.attendees?.some((a) => a.userId === currentUser?.id);
                   const myAttendee = segment.attendees?.find((a) => a.userId === currentUser?.id);
                   return (
-                    <div key={segment.id} className="mb-6 p-4 bg-muted rounded-lg">
-                      <h3 className="text-lg font-medium text-foreground mb-2">{segment.name}</h3>
+                    <div key={segment.id} className="mb-6 p-6 bg-muted/30 rounded-xl border-2 border-secondary/30 shadow-md hover:shadow-secondary/30 transition-all">
+                      <h3 className="text-xl font-bold text-secondary mb-4">{segment.name}</h3>
                       <div className="mb-4">
                         <h4 className="text-md font-medium text-foreground mb-2">
                           Attendees & Contributions
                         </h4>
                         {segment.attendees && segment.attendees.length > 0 ? (
-                          <ul className="space-y-2">
+                          <ul className="space-y-3">
                             {segment.attendees.map((attendee: EventAttendee) => (
-                              <li key={attendee.id} className="bg-card p-2 rounded">
-                                <p className="text-card-foreground font-medium">
+                              <li key={attendee.id} className="bg-card p-4 rounded-lg border-2 border-primary/20 shadow-sm">
+                                <p className="text-foreground font-bold flex items-center">
+                                  <span className="mr-2">👤</span>
                                   {attendee.user.firstName} {attendee.user.lastName}
                                 </p>
                                 {attendee.contributions && attendee.contributions.length > 0 && (
-                                  <ul className="ml-4 mt-1 space-y-1">
+                                  <ul className="ml-6 mt-2 space-y-1">
                                     {attendee.contributions.map(
                                       (contrib: EventAttendeeContribution) => (
-                                        <li key={contrib.id} className="text-muted-foreground text-sm">
-                                          {contrib.quantity}x {contrib.item} - {contrib.description}
+                                        <li key={contrib.id} className="text-foreground/80 text-sm flex items-start">
+                                          <span className="mr-2 text-accent">•</span>
+                                          <span>{contrib.quantity}x {contrib.item} - {contrib.description}</span>
                                         </li>
                                       )
                                     )}
@@ -146,15 +152,15 @@ export default function ViewEventPage() {
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-muted-foreground">No one has signed up yet.</p>
+                          <p className="text-foreground/60 italic">No one has signed up yet.</p>
                         )}
                       </div>
                       {currentUser && !isAttending ? (
                         <button
                           onClick={() => joinSegment(segment.id)}
-                          className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-accent"
+                          className="px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 font-bold shadow-md hover:shadow-accent/50 border-2 border-accent transition-all hover:scale-105"
                         >
-                          Join {segment.name}
+                          ✓ Join {segment.name}
                         </button>
                       ) : currentUser && isAttending ? (
                         <AddContributionForm
@@ -170,19 +176,19 @@ export default function ViewEventPage() {
               </div>
             )}
 
-            <div className="flex space-x-4 pt-4">
+            <div className="flex gap-4 pt-6 mt-6 border-t-2 border-muted/30">
               <Link
                 href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border border-secondary rounded-lg shadow-sm text-sm font-medium text-secondary bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+                className="flex-1 flex justify-center py-3 px-4 border-2 border-primary rounded-lg shadow-md text-base font-bold text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105 hover:shadow-primary/50"
               >
-                Back to Events
+                ← Back to Events
               </Link>
               {currentUser && event.hostId === currentUser.id && (
                 <Link
                   href={`/events/${eventId}/edit`}
-                  className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+                  className="flex-1 flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105 hover:shadow-accent/50"
                 >
-                  Edit Event
+                  ✏️ Edit Event
                 </Link>
               )}
             </div>
@@ -212,21 +218,21 @@ function AddContributionForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-2">
+    <form onSubmit={handleSubmit} className="mt-4 space-y-3 p-4 bg-card rounded-lg border-2 border-accent/20">
       <input
         type="text"
         placeholder="Food item"
         value={item}
         onChange={(e) => setItem(e.target.value)}
         required
-        className="block w-full px-3 py-2 border border-border rounded bg-input text-foreground"
+        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
       />
       <input
         type="text"
         placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="block w-full px-3 py-2 border border-border rounded bg-input text-foreground"
+        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
       />
       <input
         type="number"
@@ -235,13 +241,13 @@ function AddContributionForm({
         onChange={(e) => setQuantity(Number(e.target.value))}
         min="1"
         required
-        className="block w-full px-3 py-2 border border-border rounded bg-input text-foreground"
+        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
       />
       <button
         type="submit"
-        className="px-4 py-2 bg-accent text-accent-foreground rounded hover:bg-secondary"
+        className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-bold shadow-md hover:shadow-primary/50 border-2 border-primary transition-all hover:scale-105"
       >
-        Add Item
+        ➕ Add Contribution
       </button>
     </form>
   );

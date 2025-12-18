@@ -8,10 +8,16 @@
     --primary-foreground: 255 236 209;
     --accent: 255 125 0; /* #ff7d00 */
     --accent-foreground: 0 21 36;
+    --secondary: 120 41 15; /* #78290f */
+    --secondary-foreground: 255 236 209;
     --muted: 120 41 15; /* #78290f */
     --muted-foreground: 255 236 209;
+    --destructive: 211 47 47; /* #d32f2f */
+    --destructive-foreground: 255 236 209;
+    --card: 0 34 51; /* #002233 */
+    --card-foreground: 255 236 209;
     --border: 21 97 109;
-    --input: 21 97 109;
+    --input: 0 34 51;
     --ring: 255 125 0;
   }
 }

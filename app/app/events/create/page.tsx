@@ -120,26 +120,29 @@ export default function CreateEventPage() {
         <div className="mb-6">
           <Link
             href="/events"
-            className="inline-flex items-center text-secondary hover:text-accent font-medium"
+            className="inline-flex items-center text-primary hover:text-accent font-bold transition-colors px-4 py-2 rounded-lg hover:bg-primary/10 border border-primary/30"
           >
             <span className="mr-2">←</span>
             Back to Events
           </Link>
         </div>
 
-        <div className="bg-card rounded-lg shadow-md p-8">
+        <div className="bg-card rounded-xl shadow-xl p-8 border-2 border-accent/30">
           <div className="text-center mb-8">
+            <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
+              <span className="text-accent font-semibold text-sm">New Event</span>
+            </div>
             <div className="text-5xl mb-4">🎉</div>
-            <h1 className="text-3xl font-bold text-card-foreground mb-2">Create New Event</h1>
-            <p className="text-secondary">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Create New Event</h1>
+            <p className="text-foreground/70">
               Plan your next gathering and start organizing segments and attendees.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-card-foreground mb-2">
-                Event Name
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                🎊 Event Name
               </label>
               <input
                 type="text"
@@ -149,13 +152,13 @@ export default function CreateEventPage() {
                 onChange={handleChange}
                 required
                 placeholder="e.g., Summer BBQ, Team Meeting"
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
+                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground placeholder-foreground/40 transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-card-foreground mb-2">
-                Event Date & Time
+              <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
+                📅 Event Date & Time
               </label>
               <input
                 type="datetime-local"
@@ -164,13 +167,13 @@ export default function CreateEventPage() {
                 value={formData.date}
                 onChange={handleChange}
                 required
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground"
+                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-card-foreground mb-2">
-                Location
+              <label htmlFor="location" className="block text-sm font-medium text-foreground mb-2">
+                📍 Location
               </label>
               <input
                 type="text"
@@ -181,33 +184,32 @@ export default function CreateEventPage() {
                 required
                 ref={locationInputRef}
                 placeholder="Search for a location..."
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
+                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground placeholder-foreground/40 transition-all"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Start typing to search for addresses, businesses, or landmarks (powered by Google
-                Maps)
+              <p className="text-xs text-foreground/60 mt-2">
+                Start typing to search for addresses, businesses, or landmarks (powered by Google Maps)
               </p>
             </div>
 
             {error && (
-              <div className="bg-destructive/10 border border-destructive rounded-lg p-4">
-                <div className="text-destructive text-sm">{error}</div>
+              <div className="bg-destructive/10 border-2 border-destructive/30 rounded-lg p-4">
+                <div className="text-destructive text-sm font-medium">{error}</div>
               </div>
             )}
 
-            <div className="flex space-x-4 pt-4">
+            <div className="flex gap-4 pt-4">
               <Link
                 href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border border-secondary rounded-lg shadow-sm text-sm font-medium text-secondary bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
+                className="flex-1 flex justify-center py-3 px-4 border-2 border-muted rounded-lg shadow-md text-base font-bold text-foreground bg-card hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 hover:shadow-accent/50"
               >
-                {isSubmitting ? 'Creating...' : 'Create Event'}
+                {isSubmitting ? 'Creating...' : '✨ Create Event'}
               </button>
             </div>
           </form>

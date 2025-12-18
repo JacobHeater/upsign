@@ -17,19 +17,21 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-background shadow-sm border-b border-secondary">
+    <header className="bg-card shadow-lg border-b-2 border-accent/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 hover:opacity-80 transition-opacity">
-            <h1 className="text-xl font-bold text-primary">UpSign</h1>
+          <Link href="/" className="flex-shrink-0 hover:scale-105 transition-transform group">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent group-hover:from-accent group-hover:to-accent transition-all">
+              UpSign
+            </h1>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-2">
             <Link
               href="/"
-              className="text-primary hover:text-accent px-3 py-2 text-sm font-medium transition-colors"
+              className="text-foreground hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30"
             >
               Home
             </Link>
@@ -37,19 +39,19 @@ export default function Header() {
               <>
                 <Link
                   href="/events"
-                  className="text-primary hover:text-accent px-3 py-2 text-sm font-medium transition-colors"
+                  className="text-foreground hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30"
                 >
                   Events
                 </Link>
                 <Link
                   href="/account"
-                  className="text-primary hover:text-accent px-3 py-2 text-sm font-medium transition-colors"
+                  className="text-foreground hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30"
                 >
                   Account
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-primary hover:text-accent px-3 py-2 text-sm font-medium transition-colors"
+                  className="text-destructive hover:text-destructive-foreground hover:bg-destructive/90 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-destructive/30 hover:border-destructive"
                 >
                   Logout
                 </button>
@@ -58,7 +60,7 @@ export default function Header() {
             {!user && (
               <Link
                 href="/account/login"
-                className="text-primary hover:text-accent px-3 py-2 text-sm font-medium transition-colors"
+                className="text-accent-foreground bg-accent hover:bg-accent/80 px-4 py-2 text-sm font-medium transition-all rounded-lg shadow-md hover:shadow-lg border border-accent"
               >
                 Login
               </Link>
@@ -70,7 +72,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-primary hover:text-accent p-2"
+              className="text-accent hover:text-accent/80 p-2 hover:bg-muted/20 rounded-lg transition-all"
               aria-label="Toggle menu"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -97,12 +99,12 @@ export default function Header() {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-secondary">
+        <div className="md:hidden border-t-2 border-accent/30 bg-card/95 backdrop-blur-sm">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link
               href="/"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-primary hover:text-accent hover:bg-secondary rounded-md transition-colors"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30"
             >
               Home
             </Link>
@@ -111,20 +113,20 @@ export default function Header() {
                 <Link
                   href="/events"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-3 py-2 text-base font-medium text-primary hover:text-accent hover:bg-secondary rounded-md transition-colors"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30"
                 >
                   Events
                 </Link>
                 <Link
                   href="/account"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-3 py-2 text-base font-medium text-primary hover:text-accent hover:bg-secondary rounded-md transition-colors"
+                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30"
                 >
                   Account
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-primary hover:text-accent hover:bg-secondary rounded-md transition-colors"
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-destructive hover:text-destructive-foreground hover:bg-destructive/90 rounded-lg transition-all border border-destructive/30"
                 >
                   Logout
                 </button>
@@ -134,7 +136,7 @@ export default function Header() {
               <Link
                 href="/account/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 text-base font-medium text-primary hover:text-accent hover:bg-secondary rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-medium text-accent-foreground bg-accent hover:bg-accent/80 rounded-lg transition-all shadow-md border border-accent"
               >
                 Login
               </Link>

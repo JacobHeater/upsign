@@ -4,59 +4,69 @@ export default function Home() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="relative bg-gradient-to-b from-background via-card to-background">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,125,0,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(21,97,109,0.1),transparent_50%)]"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-primary sm:text-5xl md:text-6xl">
-              Who's Bringing What?
+            <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
+              <span className="text-accent font-semibold text-sm">Event Coordination Made Simple</span>
+            </div>
+            <h1 className="text-4xl font-bold text-foreground sm:text-5xl md:text-6xl mb-6">
+              <span className="block">Who's Bringing</span>
+              <span className="block bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent">
+                What?
+              </span>
             </h1>
-            <p className="mt-3 max-w-md mx-auto text-base text-primary sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            <p className="mt-3 max-w-md mx-auto text-base text-foreground/80 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl border-l-4 border-accent/50 pl-6">
               No more duplicate dishes or forgotten drinks. UpSign makes it easy to coordinate food,
               beverages, and supplies for any gathering—from backyard barbecues to office potlucks.
             </p>
-            <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-              <div className="rounded-md shadow">
-                <a
-                  href="/events/create"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-accent-foreground bg-accent hover:bg-secondary md:py-4 md:text-lg md:px-10"
-                >
-                  Create an Event
-                </a>
-              </div>
-              <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                <Link
-                  href="/events"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-secondary text-base font-medium rounded-md text-foreground bg-primary hover:bg-primary/80 md:py-4 md:text-lg md:px-10"
-                >
-                  Browse Events
-                </Link>
-              </div>
+            <div className="mt-8 max-w-md mx-auto sm:flex sm:justify-center md:mt-12 gap-4">
+              <a
+                href="/events/create"
+                className="group w-full flex items-center justify-center px-8 py-4 border-2 border-accent text-base font-bold rounded-lg text-accent-foreground bg-accent hover:bg-accent/90 hover:scale-105 md:text-lg md:px-10 shadow-lg hover:shadow-accent/50 transition-all"
+              >
+                <span className="mr-2">✨</span>
+                Create an Event
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+              <Link
+                href="/events"
+                className="group mt-3 sm:mt-0 w-full flex items-center justify-center px-8 py-4 border-2 border-primary text-base font-bold rounded-lg text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 md:text-lg md:px-10 shadow-lg hover:shadow-primary/50 transition-all"
+              >
+                <span className="mr-2">📅</span>
+                Browse Events
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-muted">
+      <section className="py-20 bg-gradient-to-b from-muted/30 via-muted/50 to-muted/30 border-y-2 border-accent/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-foreground">
+          <div className="text-center mb-16">
+            <div className="inline-block mb-4 px-4 py-2 bg-primary/10 border-2 border-primary/30 rounded-full">
+              <span className="text-primary font-semibold text-sm">How It Works</span>
+            </div>
+            <h2 className="text-3xl font-extrabold text-foreground mb-4">
               Simple sign-ups for any gathering
             </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-secondary">
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-foreground/70 border-l-4 border-primary/50 pl-6">
               Create an event, share the link, and let everyone claim what they're bringing.
             </p>
           </div>
 
           <div className="mt-16">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="pt-6">
-                <div className="flow-root bg-card rounded-lg px-6 pb-8">
+              <div className="pt-6 group">
+                <div className="flow-root bg-card rounded-xl px-6 pb-8 border-2 border-accent/20 hover:border-accent/60 shadow-lg hover:shadow-accent/30 transition-all hover:-translate-y-1">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-accent to-accent/80 rounded-xl shadow-lg group-hover:shadow-accent/50 transition-all group-hover:scale-110 border-2 border-accent">
                         <svg
-                          className="h-6 w-6 text-accent-foreground"
+                          className="h-7 w-7 text-accent-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -70,10 +80,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
+                    <h3 className="mt-8 text-xl font-bold text-accent tracking-tight">
                       Create Your Event
                     </h3>
-                    <p className="mt-5 text-base text-primary">
+                    <p className="mt-5 text-base text-foreground/80 leading-relaxed">
                       Set up your potluck, party, or picnic in seconds. Add the items you need and
                       share with your guests.
                     </p>
@@ -81,13 +91,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="pt-6">
-                <div className="flow-root bg-card rounded-lg px-6 pb-8">
+              <div className="pt-6 group">
+                <div className="flow-root bg-card rounded-xl px-6 pb-8 border-2 border-primary/20 hover:border-primary/60 shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-1">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg group-hover:shadow-primary/50 transition-all group-hover:scale-110 border-2 border-primary">
                         <svg
-                          className="h-6 w-6 text-accent-foreground"
+                          className="h-7 w-7 text-primary-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -101,10 +111,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
+                    <h3 className="mt-8 text-xl font-bold text-primary tracking-tight">
                       Claim &amp; Sign Up
                     </h3>
-                    <p className="mt-5 text-base text-primary">
+                    <p className="mt-5 text-base text-foreground/80 leading-relaxed">
                       Guests tell hosts what they're bringing. A simple way to track guest
                       contributions at a glance.
                     </p>
@@ -112,13 +122,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="pt-6">
-                <div className="flow-root bg-card rounded-lg px-6 pb-8">
+              <div className="pt-6 group">
+                <div className="flow-root bg-card rounded-xl px-6 pb-8 border-2 border-secondary/20 hover:border-secondary/60 shadow-lg hover:shadow-secondary/30 transition-all hover:-translate-y-1">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-secondary to-secondary/80 rounded-xl shadow-lg group-hover:shadow-secondary/50 transition-all group-hover:scale-110 border-2 border-secondary">
                         <svg
-                          className="h-6 w-6 text-accent-foreground"
+                          className="h-7 w-7 text-secondary-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -138,10 +148,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
+                    <h3 className="mt-8 text-xl font-bold text-secondary tracking-tight">
                       See It All
                     </h3>
-                    <p className="mt-5 text-base text-primary">
+                    <p className="mt-5 text-base text-foreground/80 leading-relaxed">
                       Everyone can see who's bringing what. No more group text chaos or spreadsheet
                       nightmares.
                     </p>
@@ -154,21 +164,38 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-background">
-        <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl">
-            <span className="block">Planning a get-together?</span>
-            <span className="block">Let UpSign handle the coordination.</span>
+      <section className="relative bg-gradient-to-r from-background via-card to-background overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,125,0,0.08),transparent_70%)]"></div>
+        <div className="relative max-w-3xl mx-auto text-center py-20 px-4 sm:py-24 sm:px-6 lg:px-8">
+          <div className="inline-block mb-6 px-5 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
+            <span className="text-accent font-semibold">Ready to Get Started?</span>
+          </div>
+          <h2 className="text-3xl font-extrabold text-foreground sm:text-5xl mb-6">
+            <span className="block mb-3">Planning a get-together?</span>
+            <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Let UpSign handle the coordination.
+            </span>
           </h2>
-          <p className="mt-4 text-lg leading-6 text-primary">
+          <p className="mt-6 text-xl leading-8 text-foreground/80 max-w-xl mx-auto border-l-4 border-accent/50 pl-6">
             Free, simple, and easy sign-up for guests. Your next event just got a lot easier.
           </p>
-          <a
-            href="/account/signup"
-            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-accent-foreground bg-accent hover:bg-secondary sm:w-auto"
-          >
-            Get Started Now
-          </a>
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/account/signup"
+              className="group inline-flex items-center justify-center px-8 py-4 border-2 border-accent text-lg font-bold rounded-lg text-accent-foreground bg-accent hover:bg-accent/90 hover:scale-105 shadow-xl hover:shadow-accent/50 transition-all"
+            >
+              <span className="mr-2">🚀</span>
+              Get Started Now
+              <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+            <a
+              href="/events"
+              className="group inline-flex items-center justify-center px-8 py-4 border-2 border-primary text-lg font-bold rounded-lg text-primary-foreground bg-primary hover:bg-primary/90 hover:scale-105 shadow-xl hover:shadow-primary/50 transition-all"
+            >
+              <span className="mr-2">👀</span>
+              See Examples
+            </a>
+          </div>
         </div>
       </section>
     </div>

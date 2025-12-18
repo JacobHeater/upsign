@@ -74,17 +74,17 @@ export default function EventsPage() {
                   onChange={(e) => setMineOnly(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-full h-full bg-muted rounded-full peer-checked:bg-accent transition-colors duration-300"></div>
-                <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow-md transform peer-checked:translate-x-4 transition-transform duration-300"></div>
+                <div className="w-full h-full bg-muted/50 border-2 border-muted rounded-full peer-checked:bg-accent peer-checked:border-accent transition-colors duration-300"></div>
+                <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-foreground rounded-full shadow-md transform peer-checked:translate-x-4 transition-transform duration-300"></div>
               </div>
               Mine only
             </label>
           )}
           <Link
             href="/events/create"
-            className="bg-accent text-accent-foreground px-4 py-2 rounded-md hover:bg-secondary font-medium"
+            className="bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 font-bold shadow-md hover:shadow-accent/50 border-2 border-accent transition-all hover:scale-105"
           >
-            Create Event
+            ✨ Create Event
           </Link>
         </div>
       </div>
@@ -99,30 +99,30 @@ export default function EventsPage() {
               .map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="border border-border rounded-xl p-4 shadow-sm bg-card hover:shadow-md transition-all duration-300"
+                  className="border-2 border-accent/30 rounded-xl p-5 shadow-lg bg-card hover:shadow-accent/30 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="text-2xl">📨</div>
-                    <div className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full font-medium">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="text-3xl">📨</div>
+                    <div className="text-xs bg-accent text-accent-foreground px-3 py-1 rounded-full font-bold shadow-md border border-accent">
                       Pending RSVP
                     </div>
                   </div>
-                  <p className="text-sm text-secondary mb-2">
-                    From: {invitation.sender.firstName} {invitation.sender.lastName}
+                  <p className="text-sm text-foreground/70 mb-2">
+                    <span className="font-semibold text-primary">From:</span> {invitation.sender.firstName} {invitation.sender.lastName}
                   </p>
-                  <p className="text-foreground text-sm mb-3">{invitation.message}</p>
+                  <p className="text-foreground text-sm mb-4 border-l-4 border-accent/50 pl-3">{invitation.message}</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleInvitationResponse(invitation.id, RsvpStatus.Accepted)}
-                      className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full hover:bg-primary/80 transition-colors"
+                      className="text-xs bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-all font-bold shadow-md hover:shadow-primary/50 border-2 border-primary hover:scale-105"
                     >
-                      Accept
+                      ✓ Accept
                     </button>
                     <button
                       onClick={() => handleInvitationResponse(invitation.id, RsvpStatus.Declined)}
-                      className="text-xs bg-destructive text-destructive-foreground px-3 py-1 rounded-full hover:bg-destructive/80 transition-colors"
+                      className="text-xs bg-destructive text-destructive-foreground px-4 py-2 rounded-lg hover:bg-destructive/90 transition-all font-bold shadow-md hover:shadow-destructive/50 border-2 border-destructive hover:scale-105"
                     >
-                      Decline
+                      ✗ Decline
                     </button>
                   </div>
                 </div>
@@ -150,9 +150,9 @@ export default function EventsPage() {
               </p>
               <Link
                 href="/events/create"
-                className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:bg-secondary font-medium shadow-lg transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 font-bold shadow-xl hover:shadow-accent/50 transition-all border-2 border-accent hover:scale-105"
               >
-                <span className="mr-2">+</span>
+                <span className="mr-2">✨</span>
                 Create Your First Event
               </Link>
             </div>
@@ -175,19 +175,19 @@ export default function EventsPage() {
             <div
               key={event.id}
               onClick={() => router.push(`/events/${event.id}`)}
-              className="border border-border rounded-xl p-6 shadow-sm bg-card hover:shadow-lg hover:border-accent transition-all duration-300 cursor-pointer group relative"
+              className="border-2 border-primary/30 rounded-xl p-6 shadow-lg bg-card hover:shadow-primary/30 hover:border-primary transition-all duration-300 cursor-pointer group relative hover:-translate-y-1"
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="text-3xl mb-2">🎉</div>
-                <div className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full font-medium">
+                <div className="text-4xl mb-2">🎉</div>
+                <div className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full font-bold shadow-md border-2 border-secondary">
                   {event.segments.length} segment{event.segments.length !== 1 ? 's' : ''}
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-card-foreground mb-2 group-hover:text-accent transition-colors">
+              <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                 {event.name}
               </h2>
-              <div className="space-y-1 text-sm">
-                <p className="text-secondary flex items-center">
+              <div className="space-y-2 text-sm">
+                <p className="text-foreground/80 flex items-center">
                   <span className="mr-2">📅</span>
                   {new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -196,22 +196,22 @@ export default function EventsPage() {
                     day: 'numeric',
                   })}
                 </p>
-                <p className="text-secondary flex items-center">
+                <p className="text-foreground/80 flex items-center">
                   <span className="mr-2">📍</span>
                   {event.location}
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-border flex justify-between items-center">
-                <p className="text-xs text-destructive font-medium group-hover:text-accent transition-colors">
+              <div className="mt-4 pt-3 border-t-2 border-muted/30 flex justify-between items-center">
+                <p className="text-xs text-accent font-bold group-hover:text-accent/80 transition-colors">
                   Click to view →
                 </p>
                 {currentUser && event.hostId === currentUser.id && (
                   <Link
                     href={`/events/${event.id}/edit`}
                     onClick={(e) => e.stopPropagation()}
-                    className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full font-medium hover:bg-accent transition-colors"
+                    className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md hover:shadow-primary/50 border-2 border-primary"
                   >
-                    Edit
+                    ✏️ Edit
                   </Link>
                 )}
               </div>

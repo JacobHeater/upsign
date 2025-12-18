@@ -60,7 +60,6 @@ export default function AccountPage() {
             setAllergiesInput('');
         } catch (error) {
             console.error('Failed to update allergies:', error);
-            // You could add error handling UI here
         } finally {
             setSaving(false);
         }
@@ -68,10 +67,10 @@ export default function AccountPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-ink-black flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-peach-glow mx-auto mb-4"></div>
-                    <p className="text-peach-glow text-lg">Loading your account...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-accent mx-auto mb-4"></div>
+                    <p className="text-foreground text-lg">Loading your account...</p>
                 </div>
             </div>
         );
@@ -79,16 +78,16 @@ export default function AccountPage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-ink-black flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="text-6xl mb-4">🔒</div>
-                    <h1 className="text-2xl font-bold text-peach-glow mb-4">Access Denied</h1>
-                    <p className="text-peach-glow/80 mb-6">
+                    <h1 className="text-2xl font-bold text-foreground mb-4">Access Denied</h1>
+                    <p className="text-foreground/80 mb-6">
                         You need to be logged in to view your account information.
                     </p>
                     <button
                         onClick={() => router.push('/account/login')}
-                        className="bg-racing-red hover:bg-racing-red/80 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                        className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-lg font-bold transition-all shadow-lg hover:shadow-accent/50 border-2 border-accent hover:scale-105"
                     >
                         Go to Login
                     </button>
@@ -98,45 +97,48 @@ export default function AccountPage() {
     }
 
     return (
-        <div className="min-h-screen bg-ink-black">
+        <div className="min-h-screen bg-background">
             <div className="max-w-6xl mx-auto px-6 py-12">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-peach-glow mb-2">My Account</h1>
-                    <p className="text-peach-glow/70">Manage your profile and preferences</p>
+                    <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
+                        <span className="text-accent font-semibold text-sm">Account Dashboard</span>
+                    </div>
+                    <h1 className="text-4xl font-bold text-foreground mb-2">My Account</h1>
+                    <p className="text-foreground/70">Manage your profile and preferences</p>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Profile Card */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-8">
+                        <div className="bg-card border-2 border-primary/30 rounded-xl p-8 shadow-lg hover:shadow-primary/30 transition-all">
                             <div className="flex items-center mb-6">
-                                <div className="w-16 h-16 bg-racing-red rounded-full flex items-center justify-center text-2xl font-bold text-white mr-4">
+                                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-full flex items-center justify-center text-2xl font-bold text-accent-foreground mr-4 shadow-lg border-2 border-accent">
                                     {user.firstName[0]}{user.lastName[0]}
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-peach-glow">
+                                    <h2 className="text-2xl font-bold text-foreground">
                                         {user.firstName} {user.lastName}
                                     </h2>
-                                    <p className="text-peach-glow/70">{user.email}</p>
+                                    <p className="text-foreground/70">{user.email}</p>
                                 </div>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
+                                        <label className="block text-sm font-medium text-foreground/70 mb-1">
                                             Phone Number
                                         </label>
-                                        <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
+                                        <p className="text-foreground bg-background/80 px-3 py-2 rounded-lg border border-border">
                                             {user.phoneNumber}
                                         </p>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
+                                        <label className="block text-sm font-medium text-foreground/70 mb-1">
                                             Date of Birth
                                         </label>
-                                        <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
+                                        <p className="text-foreground bg-background/80 px-3 py-2 rounded-lg border border-border">
                                             {user.dateOfBirth.toLocaleDateString()}
                                         </p>
                                     </div>
@@ -144,19 +146,19 @@ export default function AccountPage() {
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
+                                        <label className="block text-sm font-medium text-foreground/70 mb-1">
                                             Account Status
                                         </label>
                                         <div className="flex gap-2">
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.verified
-                                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                            <span className={`px-3 py-1 rounded-full text-sm font-medium border-2 ${user.verified
+                                                ? 'bg-primary/10 text-primary border-primary/30'
+                                                : 'bg-accent/10 text-accent border-accent/30'
                                                 }`}>
                                                 {user.verified ? '✓ Verified' : '⚠ Unverified'}
                                             </span>
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.locked
-                                                ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                                : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                            <span className={`px-3 py-1 rounded-full text-sm font-medium border-2 ${user.locked
+                                                ? 'bg-destructive/10 text-destructive border-destructive/30'
+                                                : 'bg-primary/10 text-primary border-primary/30'
                                                 }`}>
                                                 {user.locked ? '🔒 Locked' : '✓ Active'}
                                             </span>
@@ -164,10 +166,10 @@ export default function AccountPage() {
                                     </div>
                                     {user.lastLogin && (
                                         <div>
-                                            <label className="block text-sm font-medium text-peach-glow/70 mb-1">
+                                            <label className="block text-sm font-medium text-foreground/70 mb-1">
                                                 Last Login
                                             </label>
-                                            <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
+                                            <p className="text-foreground bg-background/80 px-3 py-2 rounded-lg border border-border">
                                                 {new Date(user.lastLogin).toLocaleString()}
                                             </p>
                                         </div>
@@ -177,13 +179,13 @@ export default function AccountPage() {
                         </div>
 
                         {/* Allergies Card */}
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-8">
+                        <div className="bg-card border-2 border-secondary/30 rounded-xl p-8 shadow-lg hover:shadow-secondary/30 transition-all">
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-xl font-bold text-peach-glow">Allergies & Dietary Restrictions</h3>
+                                <h3 className="text-xl font-bold text-foreground">Allergies & Dietary Restrictions</h3>
                                 {!editingAllergies && (
                                     <button
                                         onClick={handleEditAllergies}
-                                        className="text-peach-glow/70 hover:text-peach-glow text-sm font-medium transition-colors"
+                                        className="text-accent hover:text-accent/80 text-sm font-medium transition-colors px-3 py-1 border border-accent/30 rounded-lg hover:bg-accent/10"
                                     >
                                         {user?.allergies && user.allergies.length > 0 ? '✏️ Edit' : '➕ Add'}
                                     </button>
@@ -193,14 +195,14 @@ export default function AccountPage() {
                             {editingAllergies ? (
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-2">
+                                        <label className="block text-sm font-medium text-foreground/70 mb-2">
                                             List your allergies (separate with commas)
                                         </label>
                                         <textarea
                                             value={allergiesInput}
                                             onChange={(e) => setAllergiesInput(e.target.value)}
                                             placeholder="e.g. peanuts, dairy, gluten"
-                                            className="w-full border border-jungle-teal/20 px-4 py-3 rounded-lg focus:border-jungle-teal focus:outline-none resize-none"
+                                            className="w-full bg-input text-foreground border-2 border-border px-4 py-3 rounded-lg focus:border-ring focus:outline-none resize-none"
                                             rows={3}
                                         />
                                     </div>
@@ -208,14 +210,14 @@ export default function AccountPage() {
                                         <button
                                             onClick={handleSaveAllergies}
                                             disabled={saving}
-                                            className="bg-jungle-teal hover:bg-jungle-teal/80 text-ink-black px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-primary/50 border-2 border-primary"
                                         >
                                             {saving ? 'Saving...' : 'Save Changes'}
                                         </button>
                                         <button
                                             onClick={handleCancelEdit}
                                             disabled={saving}
-                                            className="bg-ink-black/50 hover:bg-ink-black/70 border border-jungle-teal/20 text-peach-glow px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="bg-card hover:bg-muted/30 border-2 border-border text-foreground px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             Cancel
                                         </button>
@@ -226,14 +228,14 @@ export default function AccountPage() {
                                     {user.allergies.map((allergy, index) => (
                                         <span
                                             key={index}
-                                            className="bg-racing-red/10 text-racing-red px-4 py-2 rounded-lg text-sm font-medium border border-racing-red/20"
+                                            className="bg-secondary/20 text-secondary-foreground px-4 py-2 rounded-lg text-sm font-medium border-2 border-secondary/40 shadow-sm"
                                         >
                                             {allergy.allergy}
                                         </span>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-peach-glow/70 text-sm">
+                                <p className="text-foreground/70 text-sm">
                                     No allergies recorded. Click "Add" to specify any allergies or dietary restrictions.
                                 </p>
                             )}
@@ -242,33 +244,33 @@ export default function AccountPage() {
 
                     {/* Actions Sidebar */}
                     <div className="space-y-6">
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-6">
-                            <h3 className="text-xl font-bold text-peach-glow mb-4">Quick Actions</h3>
+                        <div className="bg-card border-2 border-accent/30 rounded-xl p-6 shadow-lg hover:shadow-accent/30 transition-all">
+                            <h3 className="text-xl font-bold text-foreground mb-4">Quick Actions</h3>
                             <div className="space-y-3">
                                 <button
                                     onClick={() => router.push('/events')}
-                                    className="w-full bg-jungle-teal hover:bg-jungle-teal/80 text-ink-black px-4 py-3 rounded-lg font-medium transition-colors text-left"
+                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 rounded-lg font-medium transition-all text-left shadow-md hover:shadow-primary/50 hover:scale-105 border-2 border-primary"
                                 >
                                     📅 View My Events
                                 </button>
                                 <button
                                     onClick={() => router.push('/events/create')}
-                                    className="w-full bg-peach-glow hover:bg-peach-glow/80 text-ink-black px-4 py-3 rounded-lg font-medium transition-colors text-left"
+                                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-4 py-3 rounded-lg font-medium transition-all text-left shadow-md hover:shadow-accent/50 hover:scale-105 border-2 border-accent"
                                 >
                                     ➕ Create Event
                                 </button>
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full bg-racing-red hover:bg-racing-red/80 text-white px-4 py-3 rounded-lg font-medium transition-colors text-left"
+                                    className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground px-4 py-3 rounded-lg font-medium transition-all text-left shadow-md hover:shadow-destructive/50 hover:scale-105 border-2 border-destructive"
                                 >
                                     🚪 Logout
                                 </button>
                             </div>
                         </div>
 
-                        <div className="bg-jungle-teal/5 border border-jungle-teal/10 rounded-lg p-6">
-                            <h3 className="text-lg font-bold text-peach-glow mb-2">Account Settings</h3>
-                            <p className="text-peach-glow/70 text-sm">
+                        <div className="bg-card border-2 border-muted/30 rounded-xl p-6 shadow-md">
+                            <h3 className="text-lg font-bold text-foreground mb-2">Account Settings</h3>
+                            <p className="text-foreground/70 text-sm">
                                 Need to update your information? Contact support for account modifications.
                             </p>
                         </div>
