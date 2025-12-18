@@ -85,12 +85,12 @@ router.post('/login/otp/verify', async (req, res) => {
   // Delete the used OTP
   await otpRepo.deleteOtpAsync(validOtp.id);
 
-  const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ userId: user.id }, JWT_SECRET);
 
   res.cookie('jwt', token, {
     httpOnly: process.env.NODE_ENV === 'production',
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 60 * 1000, // 1 hour
+    maxAge: 60 * 60 * 24 * 365, // 1 year
   });
 
   const response: IApiResponse<{ message: string }> = {

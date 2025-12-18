@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import { Button, Input } from '@/components/design-system';
 
 // Declare Google Maps types
 declare global {
@@ -115,7 +116,7 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-background-secondary py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-6">
           <Link
@@ -127,11 +128,8 @@ export default function CreateEventPage() {
           </Link>
         </div>
 
-        <div className="bg-card rounded-xl shadow-xl p-8 border-2 border-accent/30">
+        <div>
           <div className="text-center mb-8">
-            <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
-              <span className="text-accent font-semibold text-sm">New Event</span>
-            </div>
             <div className="text-5xl mb-4">🎉</div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Create New Event</h1>
             <p className="text-foreground/70">
@@ -144,48 +142,21 @@ export default function CreateEventPage() {
               <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                 🎊 Event Name
               </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="e.g., Summer BBQ, Team Meeting"
-                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground placeholder-foreground/40 transition-all"
-              />
+              <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="e.g., Summer BBQ, Team Meeting" className="w-full" />
             </div>
 
             <div>
               <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
                 📅 Event Date & Time
               </label>
-              <input
-                type="datetime-local"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground transition-all"
-              />
+              <Input id="date" name="date" type="datetime-local" value={formData.date} onChange={handleChange} required className="w-full" />
             </div>
 
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-foreground mb-2">
                 📍 Location
               </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-                ref={locationInputRef}
-                placeholder="Search for a location..."
-                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground placeholder-foreground/40 transition-all"
-              />
+              <Input id="location" name="location" ref={locationInputRef as any} value={formData.location} onChange={handleChange} required placeholder="Search for a location..." className="w-full" />
               <p className="text-xs text-foreground/60 mt-2">
                 Start typing to search for addresses, businesses, or landmarks (powered by Google Maps)
               </p>
@@ -198,19 +169,10 @@ export default function CreateEventPage() {
             )}
 
             <div className="flex gap-4 pt-4">
-              <Link
-                href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border-2 border-muted rounded-lg shadow-md text-base font-bold text-foreground bg-card hover:bg-muted/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 hover:shadow-accent/50"
-              >
+              <Button href="/events" className="flex-1 flex justify-center py-3 px-4">Cancel</Button>
+              <Button type="submit" disabled={isSubmitting} variant="accent" className="flex-1 flex justify-center py-3 px-4">
                 {isSubmitting ? 'Creating...' : '✨ Create Event'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
 import { Event, EventSegment } from 'common/schema';
+import { Button, Input } from '@/components/design-system';
 
 export default function EditEventPage() {
   const router = useRouter();
@@ -172,48 +173,21 @@ export default function EditEventPage() {
               <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                 Event Name
               </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={event?.name || ''}
-                onChange={handleChange}
-                required
-                placeholder="Enter event name..."
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
-              />
+              <Input id="name" name="name" value={event?.name || ''} onChange={handleChange} required placeholder="Enter event name..." className="w-full" />
             </div>
 
             <div>
               <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
                 Event Date & Time
               </label>
-              <input
-                type="datetime-local"
-                id="date"
-                name="date"
-                value={event?.date ? event.date.toISOString().slice(0, 16) : ''}
-                onChange={handleChange}
-                required
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground"
-              />
+              <Input id="date" name="date" type="datetime-local" value={event?.date ? event.date.toISOString().slice(0, 16) : ''} onChange={handleChange} required className="w-full" />
             </div>
 
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-foreground mb-2">
                 Location
               </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={event?.location || ''}
-                onChange={handleChange}
-                required
-                ref={locationInputRef}
-                placeholder="Search for a location..."
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
-              />
+              <Input id="location" name="location" value={event?.location || ''} onChange={handleChange} required ref={locationInputRef as any} placeholder="Search for a location..." className="w-full" />
               <p className="text-xs text-muted-foreground mt-1">
                 Start typing to search for addresses, businesses, or landmarks (powered by Google
                 Maps)
@@ -225,29 +199,11 @@ export default function EditEventPage() {
             <h2 className="text-xl font-semibold text-foreground mb-4">Segments</h2>
             {segments.map((segment, index) => (
               <div key={segment.id || `new-${index}`} className="flex items-center space-x-2 mb-2">
-                <input
-                  type="text"
-                  value={segment.name}
-                  onChange={(e) => updateSegmentName(index, e.target.value)}
-                  placeholder="Segment name (e.g., Day 1, Breakfast, Lunch, etc.)"
-                  className="flex-1 px-4 py-2 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeSegment(index)}
-                  className="px-3 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/80"
-                >
-                  Remove
-                </button>
+                <Input value={segment.name} onChange={(e: any) => updateSegmentName(index, e.target.value)} placeholder="Segment name (e.g., Day 1, Breakfast, Lunch, etc.)" className="flex-1" />
+                <Button type="button" onClick={() => removeSegment(index)} variant="destructive" size="sm" className="px-3 py-2">Remove</Button>
               </div>
             ))}
-            <button
-              type="button"
-              onClick={addSegment}
-              className="mt-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-accent"
-            >
-              Add Segment
-            </button>
+            <Button type="button" onClick={addSegment} className="mt-2 px-4 py-2">Add Segment</Button>
           </div>
 
           <div className="lg:col-span-3 p-6">
@@ -258,19 +214,8 @@ export default function EditEventPage() {
             )}
 
             <div className="flex space-x-4 pt-4">
-              <Link
-                href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border border-secondary rounded-lg shadow-sm text-sm font-medium text-secondary bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Updating...' : 'Update Event'}
-              </button>
+              <Button href="/events" className="flex-1 flex justify-center py-3 px-4">Cancel</Button>
+              <Button type="submit" disabled={isSubmitting} variant="accent" className="flex-1 flex justify-center py-3 px-4">{isSubmitting ? 'Updating...' : 'Update Event'}</Button>
             </div>
           </div>
         </form>

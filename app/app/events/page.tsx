@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Button, Card, Toggle } from '@/components/design-system';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Event, EventInvitation, User } from 'common/schema';
@@ -66,26 +67,12 @@ export default function EventsPage() {
         <h1 className="text-2xl font-bold text-foreground">Events</h1>
         <div className="flex items-center gap-4">
           {currentUser && (
-            <label className="flex items-center gap-2 text-sm cursor-pointer text-foreground">
-              <div className="relative inline-block w-10 h-6">
-                <input
-                  type="checkbox"
-                  checked={mineOnly}
-                  onChange={(e) => setMineOnly(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-full h-full bg-muted/50 border-2 border-muted rounded-full peer-checked:bg-accent peer-checked:border-accent transition-colors duration-300"></div>
-                <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-foreground rounded-full shadow-md transform peer-checked:translate-x-4 transition-transform duration-300"></div>
-              </div>
-              Mine only
+            <label className="flex items-center gap-2 text-sm cursor-pointer text-card-foreground">
+              <Toggle checked={mineOnly} onChange={(v) => setMineOnly(v)} />
+              <span>Mine only</span>
             </label>
           )}
-          <Link
-            href="/events/create"
-            className="bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 font-bold shadow-md hover:shadow-accent/50 border-2 border-accent transition-all hover:scale-105"
-          >
-            ✨ Create Event
-          </Link>
+          <Button href="/events/create" className="px-4 py-2">➕ Create Event</Button>
         </div>
       </div>
 
@@ -97,35 +84,39 @@ export default function EventsPage() {
             {invitations
               .filter(invitation => invitation.rsvpStatus === RsvpStatus.Pending)
               .map((invitation) => (
-                <div
+                <Card
                   key={invitation.id}
-                  className="border-2 border-accent/30 rounded-xl p-5 shadow-lg bg-card hover:shadow-accent/30 transition-all duration-300 hover:-translate-y-1"
+                  className="p-5 hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className="text-3xl">📨</div>
+                    <div className="text-3xl text-card-foreground">📨</div>
                     <div className="text-xs bg-accent text-accent-foreground px-3 py-1 rounded-full font-bold shadow-md border border-accent">
                       Pending RSVP
                     </div>
                   </div>
-                  <p className="text-sm text-foreground/70 mb-2">
+                  <p className="text-sm text-card-foreground/80 mb-2">
                     <span className="font-semibold text-primary">From:</span> {invitation.sender.firstName} {invitation.sender.lastName}
                   </p>
-                  <p className="text-foreground text-sm mb-4 border-l-4 border-accent/50 pl-3">{invitation.message}</p>
+                  <p className="text-card-foreground text-sm mb-4 border-l-4 border-accent/50 pl-3">{invitation.message}</p>
                   <div className="flex gap-2">
-                    <button
+                    <Button
                       onClick={() => handleInvitationResponse(invitation.id, RsvpStatus.Accepted)}
-                      className="text-xs bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-all font-bold shadow-md hover:shadow-primary/50 border-2 border-primary hover:scale-105"
+                      variant="primary"
+                      size="sm"
+                      className="text-xs px-4 py-2"
                     >
                       ✓ Accept
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => handleInvitationResponse(invitation.id, RsvpStatus.Declined)}
-                      className="text-xs bg-destructive text-destructive-foreground px-4 py-2 rounded-lg hover:bg-destructive/90 transition-all font-bold shadow-md hover:shadow-destructive/50 border-2 border-destructive hover:scale-105"
+                      variant="destructive"
+                      size="sm"
+                      className="text-xs px-4 py-2"
                     >
                       ✗ Decline
-                    </button>
+                    </Button>
                   </div>
-                </div>
+                </Card>
               ))}
           </div>
         </div>
@@ -148,13 +139,10 @@ export default function EventsPage() {
                 Start planning your first event. Create gatherings, manage segments, and track
                 contributions all in one place.
               </p>
-              <Link
-                href="/events/create"
-                className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 font-bold shadow-xl hover:shadow-accent/50 transition-all border-2 border-accent hover:scale-105"
-              >
-                <span className="mr-2">✨</span>
+              <Button href="/events/create" variant="accent" className="inline-flex items-center">
+                <span className="mr-2">➕</span>
                 Create Your First Event
-              </Link>
+              </Button>
             </div>
           </div>
           <div className="md:w-1/2 flex items-center justify-center p-8">
@@ -172,22 +160,22 @@ export default function EventsPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {displayedEvents.map((event: Event) => (
-            <div
+            <Card
               key={event.id}
               onClick={() => router.push(`/events/${event.id}`)}
-              className="border-2 border-primary/30 rounded-xl p-6 shadow-lg bg-card hover:shadow-primary/30 hover:border-primary transition-all duration-300 cursor-pointer group relative hover:-translate-y-1"
+              className="cursor-pointer group hover:-translate-y-1"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="text-4xl mb-2">🎉</div>
-                <div className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full font-bold shadow-md border-2 border-secondary">
+                <div className="text-xs bg-secondary text-foreground px-3 py-1 rounded-full font-bold shadow-md border-2 border-secondary">
                   {event.segments.length} segment{event.segments.length !== 1 ? 's' : ''}
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+              <h2 className="text-xl font-bold text-card-foreground mb-3 group-hover:text-primary transition-colors">
                 {event.name}
               </h2>
               <div className="space-y-2 text-sm">
-                <p className="text-foreground/80 flex items-center">
+                <p className="text-foreground flex items-center">
                   <span className="mr-2">📅</span>
                   {new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -196,7 +184,7 @@ export default function EventsPage() {
                     day: 'numeric',
                   })}
                 </p>
-                <p className="text-foreground/80 flex items-center">
+                <p className="text-card-foreground/80 flex items-center">
                   <span className="mr-2">📍</span>
                   {event.location}
                 </p>
@@ -206,16 +194,12 @@ export default function EventsPage() {
                   Click to view →
                 </p>
                 {currentUser && event.hostId === currentUser.id && (
-                  <Link
-                    href={`/events/${event.id}/edit`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-lg font-bold hover:bg-primary/90 transition-all shadow-md hover:shadow-primary/50 border-2 border-primary"
-                  >
+                  <Button href={`/events/${event.id}/edit`} variant="secondary" size="sm" className="text-xs px-3 py-1" onClick={(e: any) => e.stopPropagation()}>
                     ✏️ Edit
-                  </Link>
+                  </Button>
                 )}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

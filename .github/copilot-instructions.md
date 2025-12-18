@@ -38,3 +38,5 @@
 - Always abstract api calls to the api lib.
 - Always ensure that existing tests pass after making changes.
 - Favor readability over one-line hacks and shortcuts.
+- Always follow thematic styling found in globals.css.
+- **IMPORTANT:** If you get an error that the port is already in use when trying to run `npm run dev`, that means I have an instance of the app running. Your changes should go live automatically.

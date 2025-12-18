@@ -7,7 +7,7 @@ export interface User {
   phoneNumber: string;
   verified: boolean;
   locked: boolean;
-  lastLogin: string | null;
+  lastLogin: Date | null;
   allergies?: UserAllergy[];
   otps?: UserOtp[];
   attendances?: EventAttendee[];

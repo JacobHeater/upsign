@@ -3,8 +3,9 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { apiClient } from '@/lib/api';
-import { useAuth } from '@/lib/auth-context';
+import { apiClient } from '@/app/lib/api';
+import { useAuth } from '@/app/lib/auth-context';
+import { Button, Input } from '@/components/design-system';
 
 function LoginForm() {
   const router = useRouter();
@@ -74,15 +75,7 @@ function LoginForm() {
               <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                 📱 Phone Number
               </label>
-              <input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground transition-all"
-                placeholder="Enter your phone number"
-              />
+              <Input type="tel" id="phone" value={phone} onChange={(e: any) => setPhone(e.target.value)} required placeholder="Enter your phone number" className="w-full" />
             </div>
 
             {error && (
@@ -91,13 +84,7 @@ function LoginForm() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 transition-all hover:scale-105 hover:shadow-accent/50"
-            >
-              {isSubmitting ? 'Sending OTP...' : 'Send OTP'}
-            </button>
+            <Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting ? 'Sending OTP...' : 'Send OTP'}</Button>
           </form>
         ) : (
           <form onSubmit={handleVerifyOTP} className="space-y-6">
@@ -105,15 +92,7 @@ function LoginForm() {
               <label htmlFor="otp" className="block text-sm font-medium text-foreground mb-2">
                 🔐 OTP Code
               </label>
-              <input
-                type="text"
-                id="otp"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                className="block w-full px-4 py-3 border-2 border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent bg-input text-foreground transition-all"
-                placeholder="Enter the 6-digit code"
-              />
+              <Input id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
             </div>
 
             {error && (
@@ -122,21 +101,9 @@ function LoginForm() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 transition-all hover:scale-105 hover:shadow-accent/50"
-            >
-              {isSubmitting ? 'Verifying...' : 'Verify OTP'}
-            </button>
+            <Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting ? 'Verifying...' : 'Verify OTP'}</Button>
 
-            <button
-              type="button"
-              onClick={() => setStep('phone')}
-              className="w-full text-sm text-primary hover:text-accent font-medium transition-colors py-2 px-4 border border-primary/30 rounded-lg hover:bg-primary/10"
-            >
-              ← Back to phone
-            </button>
+            <Button type="button" onClick={() => setStep('phone')} variant="ghost" className="w-full text-sm">← Back to phone</Button>
           </form>
         )}
 

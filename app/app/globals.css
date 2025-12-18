@@ -1,33 +1,142 @@
 @import 'tailwindcss';
 
-@layer base {
-  :root {
-    --background: 0 21 36; /* #001524 */
-    --foreground: 255 236 209; /* #ffecd1 */
-    --primary: 21 97 109; /* #15616d */
-    --primary-foreground: 255 236 209;
-    --accent: 255 125 0; /* #ff7d00 */
-    --accent-foreground: 0 21 36;
-    --secondary: 120 41 15; /* #78290f */
-    --secondary-foreground: 255 236 209;
-    --muted: 120 41 15; /* #78290f */
-    --muted-foreground: 255 236 209;
-    --destructive: 211 47 47; /* #d32f2f */
-    --destructive-foreground: 255 236 209;
-    --card: 0 34 51; /* #002233 */
-    --card-foreground: 255 236 209;
-    --border: 21 97 109;
-    --input: 0 34 51;
-    --ring: 255 125 0;
-  }
+@theme {
+  --color-background: var(--background);
+  --background-image-background-secondary: var(--background-secondary);
+  --color-foreground: var(--foreground);
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent-50: var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary-50: var(--secondary-50);
+  --color-secondary-100: var(--secondary-100);
+  --color-secondary-200: var(--secondary-200);
+  --color-secondary-300: var(--secondary-300);
+  --color-secondary-400: var(--secondary-400);
+  --color-secondary-500: var(--secondary-500);
+  --color-secondary-600: var(--secondary-600);
+  --color-secondary-700: var(--secondary-700);
+  --color-secondary-800: var(--secondary-800);
+  --color-secondary-900: var(--secondary-900);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-50: var(--muted-50);
+  --color-muted-100: var(--muted-100);
+  --color-muted-200: var(--muted-200);
+  --color-muted-300: var(--muted-300);
+  --color-muted-400: var(--muted-400);
+  --color-muted-500: var(--muted-500);
+  --color-muted-600: var(--muted-600);
+  --color-muted-700: var(--muted-700);
+  --color-muted-800: var(--muted-800);
+  --color-muted-900: var(--muted-900);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive-50: var(--destructive-50);
+  --color-destructive-100: var(--destructive-100);
+  --color-destructive-200: var(--destructive-200);
+  --color-destructive-300: var(--destructive-300);
+  --color-destructive-400: var(--destructive-400);
+  --color-destructive-500: var(--destructive-500);
+  --color-destructive-600: var(--destructive-600);
+  --color-destructive-700: var(--destructive-700);
+  --color-destructive-800: var(--destructive-800);
+  --color-destructive-900: var(--destructive-900);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-@layer base {
-  * {
-    border-color: rgb(var(--border));
-  }
-  body {
-    background-color: rgb(var(--background));
-    color: rgb(var(--foreground));
-  }
+:root {
+  --background: #006040;
+  --background-secondary: linear-gradient(to top, var(--primary-50), var(--primary-100));
+  --foreground: #000000;
+  --primary: #006744;
+  --primary-foreground: #ffecd1;
+  --primary-50: #f0fffa;
+  --primary-100: #e0fff5;
+  --primary-200: #b8ffe7;
+  --primary-300: #85ffd5;
+  --primary-400: #47ffc1;
+  --primary-500: #006744;
+  --primary-600: #00cc87;
+  --primary-700: #009965;
+  --primary-800: #006643;
+  --primary-900: #003d28;
+  --accent: #ff7d00;
+  --accent-foreground: #001524;
+  --accent-50: #ffe8d1;
+  --accent-100: #ffddbd;
+  --accent-200: #ffcb99;
+  --accent-300: #ffb46b;
+  --accent-400: #ff9a38;
+  --accent-500: #ff7d00;
+  --accent-600: #cc6400;
+  --accent-700: #994b00;
+  --accent-800: #703700;
+  --accent-900: #4c2500;
+  --secondary: #78290f;
+  --secondary-foreground: #ffecd1;
+  --secondary-50: #ed8b6c;
+  --secondary-100: #ea7d59;
+  --secondary-200: #e6643a;
+  --secondary-300: #d74a1b;
+  --secondary-400: #aa3a15;
+  --secondary-500: #78290f;
+  --secondary-600: #4b1a09;
+  --secondary-700: #1d0a04;
+  --secondary-800: #000000;
+  --secondary-900: #000000;
+  --muted: #78290f;
+  --muted-foreground: #ffecd1;
+  --muted-50: #ed8b6c;
+  --muted-100: #ea7d59;
+  --muted-200: #e6643a;
+  --muted-300: #d74a1b;
+  --muted-400: #aa3a15;
+  --muted-500: #78290f;
+  --muted-600: #4b1a09;
+  --muted-700: #1d0a04;
+  --muted-800: #000000;
+  --muted-900: #000000;
+  --destructive: #d32f2f;
+  --destructive-foreground: #ffecd1;
+  --destructive-50: #f8dcdc;
+  --destructive-100: #f4cbcb;
+  --destructive-200: #eeadad;
+  --destructive-300: #e68787;
+  --destructive-400: #dd5d5d;
+  --destructive-500: #d32f2f;
+  --destructive-600: #ab2424;
+  --destructive-700: #811b1b;
+  --destructive-800: #5f1414;
+  --destructive-900: #420e0e;
+  --card: #002233;
+  --card-foreground: #000000;
+  --border: #006744;
+  --input: #ffffff;
+  --ring: #ff7d00;
+  --gray: #275848;
 }
+
+/* Glass card styles are implemented inline in the design-system `Card` component. */
+/* Previously the .glass-card component lived here; styles moved to `src/app/components/design-system/Card.tsx` */

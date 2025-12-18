@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '../../lib/api';
-import { useAuth } from '../../lib/auth-context';
+import { apiClient } from '../lib/api';
+import { useAuth } from '../lib/auth-context';
 import type { User } from 'common/schema';
+import Link from 'next/link';
+import { Button, Card, Textarea } from '@/components/design-system';
 
 export default function AccountPage() {
     const [user, setUser] = useState<User | null>(null);
@@ -84,198 +86,127 @@ export default function AccountPage() {
                     <p className="text-foreground/80 mb-6">
                         You need to be logged in to view your account information.
                     </p>
-                    <button
-                        onClick={() => router.push('/account/login')}
-                        className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 rounded-lg font-bold transition-all shadow-lg hover:shadow-accent/50 border-2 border-accent hover:scale-105"
-                    >
-                        Go to Login
-                    </button>
+                    <Button href="/account/login" variant="accent" className="px-6 py-3">Go to Login</Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background-secondary py-12">
             <div className="max-w-6xl mx-auto px-6 py-12">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-block mb-4 px-4 py-2 bg-accent rounded-full shadow-lg">
-                        <span className="text-accent-foreground font-bold text-sm">Account Dashboard</span>
-                    </div>
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent mb-2">My Account</h1>
-                    <p className="text-foreground/70">Manage your profile and preferences</p>
+                <div className="w-full mb-8">
+                    <div className="h-2 rounded-full bg-gradient-to-r from-accent via-primary to-secondary shadow-sm" />
                 </div>
+                <Card className="rounded-3xl p-8 lg:p-12">
+                    {/* Header */}
+                    <div className="text-center mb-12 glass-header">
+                        <div className="inline-flex items-center gap-3 mb-4 px-4 py-2 glass-header-pill">
+                            <span className="w-2 h-2 rounded-full bg-accent inline-block" />
+                            <span className="font-bold text-sm text-accent-foreground">Account Dashboard</span>
+                            <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-secondary text-secondary-foreground">Member</span>
+                        </div>
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent mb-2">My Account</h1>
+                        <div className="glass-divider" />
+                        <p className="text-foreground/70">Manage your profile and preferences</p>
+                    </div>
 
-                <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Profile Card */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-gradient-to-br from-card via-card to-primary/20 border-4 border-accent rounded-xl p-8 shadow-2xl">
-                            <div className="flex items-center mb-6">
-                                <div className="w-20 h-20 bg-gradient-to-br from-accent via-accent to-secondary rounded-full flex items-center justify-center text-3xl font-bold text-accent-foreground mr-4 shadow-xl border-4 border-accent">
-                                    {user.firstName[0]}{user.lastName[0]}
-                                </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-accent">
-                                        {user.firstName} {user.lastName}
-                                    </h2>
-                                    <p className="text-primary text-lg">{user.email}</p>
-                                </div>
-                            </div>
-
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <div className="bg-primary/30 p-4 rounded-lg border-2 border-primary">
-                                        <label className="block text-sm font-bold text-primary mb-2">
-                                            📱 Phone Number
-                                        </label>
-                                        <p className="text-foreground font-semibold text-lg">
-                                            {user.phoneNumber}
-                                        </p>
+                    <div className="grid lg:grid-cols-3 gap-8">
+                        {/* Profile Card */}
+                        <div className="lg:col-span-2 space-y-8">
+                            <Card className="relative rounded-xl p-8 overflow-hidden" size="lg">
+                                <div className="absolute -right-10 -top-10 w-60 h-60 rounded-full glass-blob pointer-events-none" />
+                                <div className="flex items-center mb-6">
+                                    <div className="w-20 h-20 glass-avatar rounded-full flex items-center justify-center text-3xl font-bold text-accent-foreground mr-4">
+                                        {/* User initials */}
+                                        {user?.firstName[0]}{user?.lastName[0]}
                                     </div>
-                                    <div className="bg-secondary/30 p-4 rounded-lg border-2 border-secondary">
-                                        <label className="block text-sm font-bold text-secondary mb-2">
-                                            🎂 Date of Birth
-                                        </label>
-                                        <p className="text-foreground font-semibold text-lg">
-                                            {user.dateOfBirth.toLocaleDateString()}
-                                        </p>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-foreground">{user?.firstName} {user?.lastName}</h2>
+                                        <p className="text-sm text-foreground/70">{user?.email}</p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <div className="bg-accent/20 p-4 rounded-lg border-2 border-accent">
-                                        <label className="block text-sm font-bold text-accent mb-3">
-                                            ⚡ Account Status
-                                        </label>
-                                        <div className="flex flex-col gap-2">
-                                            <span className={`px-4 py-2 rounded-lg text-sm font-bold shadow-md border-2 ${user.verified
-                                                ? 'bg-primary text-primary-foreground border-primary'
-                                                : 'bg-accent text-accent-foreground border-accent'
-                                                }`}>
-                                                {user.verified ? '✓ Verified' : '⚠ Unverified'}
-                                            </span>
-                                            <span className={`px-4 py-2 rounded-lg text-sm font-bold shadow-md border-2 ${user.locked
-                                                ? 'bg-destructive text-destructive-foreground border-destructive'
-                                                : 'bg-primary text-primary-foreground border-primary'
-                                                }`}>
-                                                {user.locked ? '🔒 Locked' : '✓ Active'}
-                                            </span>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                        <div className="glass-info">
+                                            <p className="text-sm font-semibold text-foreground">Phone Number</p>
+                                            <p className="text-lg text-accent-foreground">{user?.phoneNumber}</p>
+                                        </div>
+                                        <div className="glass-info">
+                                            <p className="text-sm font-semibold text-foreground">Date of Birth</p>
+                                            <p className="text-lg text-accent-foreground">{user?.dateOfBirth?.toLocaleDateString()}</p>
                                         </div>
                                     </div>
-                                    {user.lastLogin && (
-                                        <div className="bg-muted/40 p-4 rounded-lg border-2 border-muted">
-                                            <label className="block text-sm font-bold text-muted mb-2">
-                                                🕐 Last Login
-                                            </label>
-                                            <p className="text-foreground font-semibold">
-                                                {new Date(user.lastLogin).toLocaleString()}
-                                            </p>
+
+                                    <div className="space-y-4">
+                                        <div className="glass-info">
+                                            <p className="text-sm font-semibold text-foreground">Account Status</p>
+                                            <p className="text-lg text-accent-foreground">{user?.verified ? 'Verified' : 'Unverified'}</p>
                                         </div>
+                                        <div className="glass-info">
+                                            <p className="text-sm font-semibold text-foreground">Last Login</p>
+                                            <p className="text-lg text-accent-foreground">{user?.lastLogin?.toISOString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            {/* Allergies Card */}
+                            <Card className="rounded-xl p-8 relative" size="sm">
+                                <div className="absolute left-6 top-6 w-24 h-24 rounded-full glass-blob-sm -z-10" />
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-2xl font-bold text-secondary">🥜 Allergies & Dietary Restrictions</h3>
+                                    {!editingAllergies && (
+                                        <Button onClick={handleEditAllergies} variant="primary" size="sm" className="glass-btn">Edit</Button>
                                     )}
                                 </div>
-                            </div>
-                        </div>
 
-                        {/* Allergies Card */}
-                        <div className="bg-gradient-to-br from-card to-secondary/20 border-4 border-secondary rounded-xl p-8 shadow-2xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-2xl font-bold text-secondary">🥜 Allergies & Dietary Restrictions</h3>
-                                {!editingAllergies && (
-                                    <button
-                                        onClick={handleEditAllergies}
-                                        className="text-accent-foreground bg-accent hover:bg-accent/90 text-sm font-bold transition-all px-4 py-2 border-2 border-accent rounded-lg shadow-md hover:scale-105"
-                                    >
-                                        {user?.allergies && user.allergies.length > 0 ? '✏️ Edit' : '➕ Add'}
-                                    </button>
+                                {editingAllergies ? (
+                                    <div className="space-y-4">
+                                        <Textarea value={allergiesInput} onChange={(e: any) => setAllergiesInput(e.target.value)} className="w-full" />
+                                        <div className="flex gap-4">
+                                            <Button onClick={handleSaveAllergies} variant="primary" className="glass-btn">Save</Button>
+                                            <Button onClick={handleCancelEdit} variant="ghost" className="glass-btn">Cancel</Button>
+                                        </div>
+                                    </div>
+                                ) : user?.allergies && user.allergies.length > 0 ? (
+                                    <div className="flex flex-wrap gap-3">
+                                        {user.allergies.map((allergy, index) => (
+                                            <span key={index} className="glass-tag">
+                                                {allergy.allergy}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-foreground/70 text-sm italic">
+                                        No allergies recorded. Click "Add" to specify any allergies or dietary restrictions.
+                                    </p>
                                 )}
-                            </div>
+                            </Card>
+                        </div>
 
-                            {editingAllergies ? (
+                        {/* Actions Sidebar */}
+                        <div className="space-y-6">
+                            <Card className="rounded-xl p-6" size="sm">
+                                <h3 className="text-2xl font-bold text-accent mb-6">⚡ Quick Actions</h3>
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-bold text-foreground mb-2">
-                                            List your allergies (separate with commas)
-                                        </label>
-                                        <textarea
-                                            value={allergiesInput}
-                                            onChange={(e) => setAllergiesInput(e.target.value)}
-                                            placeholder="e.g. peanuts, dairy, gluten"
-                                            className="w-full bg-input text-foreground border-4 border-accent px-4 py-3 rounded-lg focus:border-secondary focus:outline-none resize-none font-medium"
-                                            rows={3}
-                                        />
-                                    </div>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={handleSaveAllergies}
-                                            disabled={saving}
-                                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-primary/50 border-2 border-primary hover:scale-105"
-                                        >
-                                            {saving ? 'Saving...' : '💾 Save Changes'}
-                                        </button>
-                                        <button
-                                            onClick={handleCancelEdit}
-                                            disabled={saving}
-                                            className="bg-muted hover:bg-muted/80 border-2 border-muted text-muted-foreground px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
-                                        >
-                                            ❌ Cancel
-                                        </button>
-                                    </div>
+                                    <Button onClick={() => router.push('/events')} className="glass-action-btn glass-action-primary w-full px-5 py-4 text-left">📅 View My Events</Button>
+                                    <Button onClick={() => router.push('/events/create')} className="glass-action-btn glass-action-primary w-full px-5 py-4 text-left">➕ Create Event</Button>
+                                    <Button onClick={handleLogout} variant="ghost" className="glass-action-btn glass-action-muted w-full px-5 py-4 text-left">🚪 Logout</Button>
                                 </div>
-                            ) : user?.allergies && user.allergies.length > 0 ? (
-                                <div className="flex flex-wrap gap-3">
-                                    {user.allergies.map((allergy, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-gradient-to-r from-destructive to-secondary text-foreground px-5 py-3 rounded-lg text-base font-bold border-3 border-destructive shadow-lg"
-                                        >
-                                            ⚠️ {allergy.allergy}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-foreground/70 text-sm italic">
-                                    No allergies recorded. Click "Add" to specify any allergies or dietary restrictions.
+                            </Card>
+
+                            <Card className="rounded-xl p-6" size="sm">
+                                <h3 className="text-xl font-bold text-secondary mb-3">⚙️ Account Settings</h3>
+                                <p className="text-foreground text-sm">
+                                    Need to update your information? Contact support for account modifications.
                                 </p>
-                            )}
+                            </Card>
                         </div>
                     </div>
-
-                    {/* Actions Sidebar */}
-                    <div className="space-y-6">
-                        <div className="bg-gradient-to-br from-card to-accent/20 border-4 border-accent rounded-xl p-6 shadow-2xl">
-                            <h3 className="text-2xl font-bold text-accent mb-6">⚡ Quick Actions</h3>
-                            <div className="space-y-4">
-                                <button
-                                    onClick={() => router.push('/events')}
-                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-4 rounded-lg font-bold transition-all text-left shadow-xl hover:shadow-primary/50 hover:scale-110 border-3 border-primary text-lg"
-                                >
-                                    📅 View My Events
-                                </button>
-                                <button
-                                    onClick={() => router.push('/events/create')}
-                                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground px-5 py-4 rounded-lg font-bold transition-all text-left shadow-xl hover:shadow-accent/50 hover:scale-110 border-3 border-accent text-lg"
-                                >
-                                    ➕ Create Event
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground px-5 py-4 rounded-lg font-bold transition-all text-left shadow-xl hover:shadow-destructive/50 hover:scale-110 border-3 border-destructive text-lg"
-                                >
-                                    🚪 Logout
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="bg-gradient-to-br from-card to-muted/20 border-4 border-muted rounded-xl p-6 shadow-xl">
-                            <h3 className="text-xl font-bold text-secondary mb-3">⚙️ Account Settings</h3>
-                            <p className="text-foreground text-sm">
-                                Need to update your information? Contact support for account modifications.
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+        </div >
     );
 }

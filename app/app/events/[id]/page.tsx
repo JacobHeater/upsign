@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { Button, Input } from '@/components/design-system';
 import { apiClient } from '@/lib/api';
 import { Event, EventSegment, EventAttendee, EventAttendeeContribution, User } from 'common/schema';
 
@@ -115,83 +116,77 @@ export default function ViewEventPage() {
             </div>
           </div>
 
-            {event.segments && event.segments.length > 0 && (
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-6 border-b-2 border-accent/30 pb-2">Event Segments</h2>
-                {event.segments.map((segment: EventSegment) => {
-                  const isAttending = segment.attendees?.some((a) => a.userId === currentUser?.id);
-                  const myAttendee = segment.attendees?.find((a) => a.userId === currentUser?.id);
-                  return (
-                    <div key={segment.id} className="mb-6 p-6 bg-muted/30 rounded-xl border-2 border-secondary/30 shadow-md hover:shadow-secondary/30 transition-all">
-                      <h3 className="text-xl font-bold text-secondary mb-4">{segment.name}</h3>
-                      <div className="mb-4">
-                        <h4 className="text-md font-medium text-foreground mb-2">
-                          Attendees & Contributions
-                        </h4>
-                        {segment.attendees && segment.attendees.length > 0 ? (
-                          <ul className="space-y-3">
-                            {segment.attendees.map((attendee: EventAttendee) => (
-                              <li key={attendee.id} className="bg-card p-4 rounded-lg border-2 border-primary/20 shadow-sm">
-                                <p className="text-foreground font-bold flex items-center">
-                                  <span className="mr-2">👤</span>
-                                  {attendee.user.firstName} {attendee.user.lastName}
-                                </p>
-                                {attendee.contributions && attendee.contributions.length > 0 && (
-                                  <ul className="ml-6 mt-2 space-y-1">
-                                    {attendee.contributions.map(
-                                      (contrib: EventAttendeeContribution) => (
-                                        <li key={contrib.id} className="text-foreground/80 text-sm flex items-start">
-                                          <span className="mr-2 text-accent">•</span>
-                                          <span>{contrib.quantity}x {contrib.item} - {contrib.description}</span>
-                                        </li>
-                                      )
-                                    )}
-                                  </ul>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="text-foreground/60 italic">No one has signed up yet.</p>
-                        )}
-                      </div>
-                      {currentUser && !isAttending ? (
-                        <button
-                          onClick={() => joinSegment(segment.id)}
-                          className="px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 font-bold shadow-md hover:shadow-accent/50 border-2 border-accent transition-all hover:scale-105"
-                        >
-                          ✓ Join {segment.name}
-                        </button>
-                      ) : currentUser && isAttending ? (
-                        <AddContributionForm
-                          attendeeId={myAttendee!.id}
-                          onAdd={(item, desc, qty) =>
-                            addContribution(myAttendee!.id, item, desc, qty)
-                          }
-                        />
-                      ) : null}
+          {event.segments && event.segments.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6 border-b-2 border-accent/30 pb-2">Event Segments</h2>
+              {event.segments.map((segment: EventSegment) => {
+                const isAttending = segment.attendees?.some((a) => a.userId === currentUser?.id);
+                const myAttendee = segment.attendees?.find((a) => a.userId === currentUser?.id);
+                return (
+                  <div key={segment.id} className="mb-6 p-6 bg-muted/30 rounded-xl border-2 border-secondary/30 shadow-md hover:shadow-secondary/30 transition-all">
+                    <h3 className="text-xl font-bold text-secondary mb-4">{segment.name}</h3>
+                    <div className="mb-4">
+                      <h4 className="text-md font-medium text-foreground mb-2">
+                        Attendees & Contributions
+                      </h4>
+                      {segment.attendees && segment.attendees.length > 0 ? (
+                        <ul className="space-y-3">
+                          {segment.attendees.map((attendee: EventAttendee) => (
+                            <li key={attendee.id} className="bg-card p-4 rounded-lg border-2 border-primary/20 shadow-sm">
+                              <p className="text-foreground font-bold flex items-center">
+                                <span className="mr-2">👤</span>
+                                {attendee.user.firstName} {attendee.user.lastName}
+                              </p>
+                              {attendee.contributions && attendee.contributions.length > 0 && (
+                                <ul className="ml-6 mt-2 space-y-1">
+                                  {attendee.contributions.map(
+                                    (contrib: EventAttendeeContribution) => (
+                                      <li key={contrib.id} className="text-foreground/80 text-sm flex items-start">
+                                        <span className="mr-2 text-accent">•</span>
+                                        <span>{contrib.quantity}x {contrib.item} - {contrib.description}</span>
+                                      </li>
+                                    )
+                                  )}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-foreground/60 italic">No one has signed up yet.</p>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="flex gap-4 pt-6 mt-6 border-t-2 border-muted/30">
-              <Link
-                href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border-2 border-primary rounded-lg shadow-md text-base font-bold text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105 hover:shadow-primary/50"
-              >
-                ← Back to Events
-              </Link>
-              {currentUser && event.hostId === currentUser.id && (
-                <Link
-                  href={`/events/${eventId}/edit`}
-                  className="flex-1 flex justify-center py-3 px-4 border-2 border-accent rounded-lg shadow-md text-base font-bold text-accent-foreground bg-accent hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all hover:scale-105 hover:shadow-accent/50"
-                >
-                  ✏️ Edit Event
-                </Link>
-              )}
+                    {currentUser && !isAttending ? (
+                      <Button
+                        onClick={() => joinSegment(segment.id)}
+                        variant="accent"
+                        className="px-6 py-3"
+                      >
+                        ✓ Join {segment.name}
+                      </Button>
+                    ) : currentUser && isAttending ? (
+                      <AddContributionForm
+                        attendeeId={myAttendee!.id}
+                        onAdd={(item, desc, qty) =>
+                          addContribution(myAttendee!.id, item, desc, qty)
+                        }
+                      />
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
+          )}
+
+          <div className="flex gap-4 pt-6 mt-6 border-t-2 border-muted/30">
+            <Button href="/events" variant="primary" className="flex-1 flex justify-center py-3 px-4">
+              ← Back to Events
+            </Button>
+            {currentUser && event.hostId === currentUser.id && (
+              <Button href={`/events/${eventId}/edit`} variant="accent" className="flex-1 flex justify-center py-3 px-4">
+                ✏️ Edit Event
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -219,36 +214,29 @@ function AddContributionForm({
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-3 p-4 bg-card rounded-lg border-2 border-accent/20">
-      <input
-        type="text"
+      <Input
         placeholder="Food item"
         value={item}
-        onChange={(e) => setItem(e.target.value)}
+        onChange={(e: any) => setItem(e.target.value)}
         required
-        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
+        className="w-full"
       />
-      <input
-        type="text"
+      <Input
         placeholder="Description"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
+        onChange={(e: any) => setDescription(e.target.value)}
+        className="w-full"
       />
-      <input
+      <Input
         type="number"
         placeholder="Quantity"
         value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-        min="1"
+        onChange={(e: any) => setQuantity(Number(e.target.value))}
+        min={1}
         required
-        className="block w-full px-4 py-3 border-2 border-border rounded-lg bg-input text-foreground transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
+        className="w-full"
       />
-      <button
-        type="submit"
-        className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-bold shadow-md hover:shadow-primary/50 border-2 border-primary transition-all hover:scale-105"
-      >
-        ➕ Add Contribution
-      </button>
+      <Button type="submit" variant="primary" className="w-full">➕ Add Contribution</Button>
     </form>
   );
 }
