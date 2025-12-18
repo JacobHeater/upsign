@@ -16,7 +16,7 @@ export default async function EventsLayout({ children }: { children: React.React
   try {
     // Verify the JWT
     await jwtVerify(jwt, secret);
-  } catch (error) {
+  } catch {
     // Invalid or expired token
     redirect('/account/login?returnUrl=' + encodeURIComponent('/events'));
   }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { apiClient } from '../../../lib/api';
+import { apiClient } from '@/lib/api';
 
 interface SignupFormData {
   firstName: string;
@@ -46,7 +46,7 @@ export default function SignupPage() {
         .map((a) => a.trim())
         .filter((a) => a);
 
-      await apiClient.createUser({
+      await apiClient.signup({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -59,7 +59,7 @@ export default function SignupPage() {
       });
 
       // After signup, redirect to login
-      router.push('/auth/login?message=Account created successfully. Please log in.');
+      router.push('/account/login?message=Account created successfully. Please log in.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -69,12 +69,12 @@ export default function SignupPage() {
 
   return (
     <div className="max-w-md mx-auto mt-8 px-4">
-      <h1 className="text-2xl font-bold mb-6 text-ink-black">Sign Up</h1>
+      <h1 className="text-2xl font-bold mb-6 text-foreground">Sign Up</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-ink-black">
+            <label htmlFor="firstName" className="block text-sm font-medium text-foreground">
               First Name
             </label>
             <input
@@ -84,12 +84,12 @@ export default function SignupPage() {
               value={formData.firstName}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+              className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
             />
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-ink-black">
+            <label htmlFor="lastName" className="block text-sm font-medium text-foreground">
               Last Name
             </label>
             <input
@@ -99,13 +99,13 @@ export default function SignupPage() {
               value={formData.lastName}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+              className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-ink-black">
+          <label htmlFor="email" className="block text-sm font-medium text-foreground">
             Email
           </label>
           <input
@@ -115,12 +115,12 @@ export default function SignupPage() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
           />
         </div>
 
         <div>
-          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-ink-black">
+          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-foreground">
             Date of Birth
           </label>
           <input
@@ -130,12 +130,12 @@ export default function SignupPage() {
             value={formData.dateOfBirth}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
           />
         </div>
 
         <div>
-          <label htmlFor="phoneNumber" className="block text-sm font-medium text-ink-black">
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-foreground">
             Phone Number
           </label>
           <input
@@ -145,12 +145,12 @@ export default function SignupPage() {
             value={formData.phoneNumber}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
           />
         </div>
 
         <div>
-          <label htmlFor="allergies" className="block text-sm font-medium text-ink-black">
+          <label htmlFor="allergies" className="block text-sm font-medium text-foreground">
             Allergies (comma-separated)
           </label>
           <textarea
@@ -159,26 +159,26 @@ export default function SignupPage() {
             value={formData.allergies}
             onChange={handleChange}
             rows={3}
-            className="mt-1 block w-full px-3 py-2 border border-jungle-teal rounded-md shadow-sm focus:outline-none focus:ring-deep-ocean focus:border-deep-ocean bg-white"
+            className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
             placeholder="e.g., peanuts, dairy, gluten"
           />
         </div>
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {error && <div className="text-destructive text-sm">{error}</div>}
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-deep-ocean hover:bg-jungle-teal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-deep-ocean disabled:opacity-50"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50"
         >
           {isSubmitting ? 'Creating Account...' : 'Sign Up'}
         </button>
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-jungle-teal">
+        <p className="text-sm text-secondary">
           Already have an account?{' '}
-          <Link href="/account/login" className="font-medium text-deep-ocean hover:text-racing-red">
+          <Link href="/account/login" className="font-medium text-accent hover:text-destructive">
             Log in
           </Link>
         </p>

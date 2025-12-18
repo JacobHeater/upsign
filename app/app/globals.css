@@ -1,39 +1,27 @@
 @import 'tailwindcss';
 
-:root {
-  --background: #faf3e1;  /* Tuscan Sun light */
-  --foreground: #264653;  /* Charcoal Blue */
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  /* Custom Color Palette - Warm Vintage with Strong Contrast */
-  --color-ink-black: #264653ff;        /* Charcoal Blue - dark text */
-  --color-deep-ocean: #2a9d8fff;       /* Verdigris - teal accent */
-  --color-jungle-teal: #6cd8cbff;      /* Verdigris Light - soft teal */
-  --color-peach-glow: #f4a261ff;       /* Sandy Brown - warm orange */
-  --color-racing-red: #e76f51ff;       /* Burnt Peach - coral accent */
-  --color-light-peach: #faf3e1ff;      /* Tuscan Sun Light - cream background */
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 21 36; /* #001524 */
+    --foreground: 255 236 209; /* #ffecd1 */
+    --primary: 21 97 109; /* #15616d */
+    --primary-foreground: 255 236 209;
+    --accent: 255 125 0; /* #ff7d00 */
+    --accent-foreground: 0 21 36;
+    --muted: 120 41 15; /* #78290f */
+    --muted-foreground: 255 236 209;
+    --border: 21 97 109;
+    --input: 21 97 109;
+    --ring: 255 125 0;
   }
 }
 
-body {
-  background: var(--color-light-peach) !important;
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-input,
-textarea {
-  color: var(--color-ink-black) !important;
+@layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+  }
 }

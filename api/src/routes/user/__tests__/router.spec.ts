@@ -1,11 +1,34 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import app from '../../../index';
+import { PrismaUserRepository } from '../../../repositories/users/prisma-user-repository';
+import { describe, it, expect, beforeAll } from '@jest/globals';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 describe('User Router', () => {
   const token = jwt.sign({ userId: 'test-user' }, JWT_SECRET, { expiresIn: '1h' });
+  const userRepo = new PrismaUserRepository();
+
+  beforeAll(async () => {
+    // Create test user
+    try {
+      await userRepo.createAsync({
+        id: 'test-user',
+        firstName: 'Test',
+        lastName: 'User',
+        allergies: [],
+        email: 'test-user@example.com',
+        dateOfBirth: new Date(),
+        phoneNumber: '1234567890',
+        verified: true,
+        locked: false,
+        lastLogin: null,
+      } as any);
+    } catch (e) {
+      // Ignore if already exists
+    }
+  });
 
   describe('POST /api/user', () => {
     it('should create user', async () => {
@@ -41,7 +64,7 @@ describe('User Router', () => {
   describe('PUT /api/user/:id', () => {
     it('should update user', async () => {
       const response = await request(app)
-        .put('/api/user/1')
+        .put('/api/user/test-user')
         .set('Cookie', [`jwt=${token}`])
         .send({ firstName: 'Jane' });
 

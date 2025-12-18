@@ -1,0 +1,19 @@
+{
+    "name": "common",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": "./dist/index.js",
+        "./schema": "./dist/schema/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "format": "prettier --write ."
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.5",
+        "prettier": "^3.7.4",
+        "typescript": "^5.3.3"
+    }
+}

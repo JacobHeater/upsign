@@ -1,33 +1,35 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <div className="bg-peach-glow">
+    <div className="bg-background">
       {/* Hero Section */}
-      <section className="bg-ink-black">
+      <section className="bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-peach-glow sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl font-bold text-primary sm:text-5xl md:text-6xl">
               Who's Bringing What?
             </h1>
-            <p className="mt-3 max-w-md mx-auto text-base text-peach-glow sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            <p className="mt-3 max-w-md mx-auto text-base text-primary sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
               No more duplicate dishes or forgotten drinks. UpSign makes it easy to coordinate food,
               beverages, and supplies for any gathering—from backyard barbecues to office potlucks.
             </p>
             <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
               <div className="rounded-md shadow">
                 <a
-                  href="/account/signup"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-deep-ocean hover:bg-jungle-teal md:py-4 md:text-lg md:px-10"
+                  href="/events/create"
+                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-accent-foreground bg-accent hover:bg-secondary md:py-4 md:text-lg md:px-10"
                 >
                   Create an Event
                 </a>
               </div>
               <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                <a
+                <Link
                   href="/events"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-jungle-teal text-base font-medium rounded-md text-ink-black bg-peach-glow hover:bg-light-peach hover:text-ink-black md:py-4 md:text-lg md:px-10"
+                  className="w-full flex items-center justify-center px-8 py-3 border border-secondary text-base font-medium rounded-md text-foreground bg-primary hover:bg-primary/80 md:py-4 md:text-lg md:px-10"
                 >
                   Browse Events
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -35,13 +37,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-light-peach">
+      <section className="py-16 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-ink-black">
+            <h2 className="text-3xl font-extrabold text-foreground">
               Simple sign-ups for any gathering
             </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-jungle-teal">
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-secondary">
               Create an event, share the link, and let everyone claim what they're bringing.
             </p>
           </div>
@@ -49,12 +51,12 @@ export default function Home() {
           <div className="mt-16">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <div className="pt-6">
-                <div className="flow-root bg-ink-black rounded-lg px-6 pb-8">
+                <div className="flow-root bg-card rounded-lg px-6 pb-8">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-white"
+                          className="h-6 w-6 text-accent-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -68,10 +70,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-peach-glow tracking-tight">
+                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
                       Create Your Event
                     </h3>
-                    <p className="mt-5 text-base text-peach-glow">
+                    <p className="mt-5 text-base text-primary">
                       Set up your potluck, party, or picnic in seconds. Add the items you need and
                       share with your guests.
                     </p>
@@ -80,12 +82,12 @@ export default function Home() {
               </div>
 
               <div className="pt-6">
-                <div className="flow-root bg-ink-black rounded-lg px-6 pb-8">
+                <div className="flow-root bg-card rounded-lg px-6 pb-8">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-white"
+                          className="h-6 w-6 text-accent-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -99,10 +101,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-peach-glow tracking-tight">
+                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
                       Claim &amp; Sign Up
                     </h3>
-                    <p className="mt-5 text-base text-peach-glow">
+                    <p className="mt-5 text-base text-primary">
                       Guests tell hosts what they're bringing. A simple way to track guest
                       contributions at a glance.
                     </p>
@@ -111,12 +113,12 @@ export default function Home() {
               </div>
 
               <div className="pt-6">
-                <div className="flow-root bg-ink-black rounded-lg px-6 pb-8">
+                <div className="flow-root bg-card rounded-lg px-6 pb-8">
                   <div className="-mt-6">
                     <div>
-                      <span className="inline-flex items-center justify-center p-3 bg-deep-ocean rounded-md shadow-lg">
+                      <span className="inline-flex items-center justify-center p-3 bg-accent rounded-md shadow-lg">
                         <svg
-                          className="h-6 w-6 text-white"
+                          className="h-6 w-6 text-accent-foreground"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -136,10 +138,10 @@ export default function Home() {
                         </svg>
                       </span>
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-peach-glow tracking-tight">
+                    <h3 className="mt-8 text-lg font-medium text-primary tracking-tight">
                       See It All
                     </h3>
-                    <p className="mt-5 text-base text-peach-glow">
+                    <p className="mt-5 text-base text-primary">
                       Everyone can see who's bringing what. No more group text chaos or spreadsheet
                       nightmares.
                     </p>
@@ -152,18 +154,18 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-ink-black">
+      <section className="bg-background">
         <div className="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-peach-glow sm:text-4xl">
+          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl">
             <span className="block">Planning a get-together?</span>
             <span className="block">Let UpSign handle the coordination.</span>
           </h2>
-          <p className="mt-4 text-lg leading-6 text-peach-glow">
+          <p className="mt-4 text-lg leading-6 text-primary">
             Free, simple, and easy sign-up for guests. Your next event just got a lot easier.
           </p>
           <a
             href="/account/signup"
-            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-deep-ocean hover:bg-jungle-teal sm:w-auto"
+            className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-accent-foreground bg-accent hover:bg-secondary sm:w-auto"
           >
             Get Started Now
           </a>
