@@ -9,7 +9,8 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
       include: {
         allergies: true,
         otps: true,
-        attendances: { include: { segment: true, contributions: true } },
+        attendances: { include: { event: { include: { host: true, segments: true } } } },
+        segmentAttendances: { include: { segment: true, contributions: true } },
         hostedEvents: { include: { segments: true } },
         sentInvitations: { include: { sender: true, recipient: true } },
         receivedInvitations: { include: { sender: true, recipient: true } },
@@ -23,7 +24,8 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
       include: {
         allergies: true,
         otps: true,
-        attendances: { include: { segment: true, contributions: true } },
+        attendances: { include: { event: { include: { host: true, segments: true } } } },
+        segmentAttendances: { include: { segment: true, contributions: true } },
         hostedEvents: { include: { segments: true } },
         sentInvitations: { include: { sender: true, recipient: true } },
         receivedInvitations: { include: { sender: true, recipient: true } },
@@ -33,7 +35,16 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
   }
 
   async createAsync(item: User): Promise<User> {
-    const { allergies, otps, attendances, hostedEvents, ...userData } = item;
+    const {
+      allergies,
+      otps,
+      attendances,
+      segmentAttendances,
+      hostedEvents,
+      createdAt,
+      updatedAt,
+      ...userData
+    } = item;
     const data = {
       ...userData,
       dateOfBirth: new Date(userData.dateOfBirth),
@@ -49,7 +60,8 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
       include: {
         allergies: true,
         otps: true,
-        attendances: { include: { segment: true, contributions: true } },
+        attendances: { include: { event: { include: { host: true, segments: true } } } },
+        segmentAttendances: { include: { segment: true, contributions: true } },
         hostedEvents: { include: { segments: true } },
         sentInvitations: { include: { sender: true, recipient: true } },
         receivedInvitations: { include: { sender: true, recipient: true } },
@@ -59,10 +71,23 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
   }
 
   async updateAsync(id: string, item: User): Promise<User | null> {
-    const { id: _, allergies, otps, attendances, hostedEvents, ...userData } = item;
+    const {
+      id: _,
+      allergies,
+      otps,
+      attendances,
+      segmentAttendances,
+      hostedEvents,
+      createdAt,
+      updatedAt,
+      ...userData
+    } = item;
     const data = {
       ...userData,
     };
+    // Remove relational fields that can't be updated directly
+    delete (data as any).sentInvitations;
+    delete (data as any).receivedInvitations;
     logger.info('Updating user', { userId: id, item });
     try {
       await this.prisma.user.update({
@@ -81,7 +106,8 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
         include: {
           allergies: true,
           otps: true,
-          attendances: { include: { segment: true, contributions: true } },
+          attendances: { include: { event: { include: { host: true, segments: true } } } },
+          segmentAttendances: { include: { segment: true, contributions: true } },
           hostedEvents: { include: { segments: true } },
           sentInvitations: { include: { sender: true, recipient: true } },
           receivedInvitations: { include: { sender: true, recipient: true } },
@@ -108,6 +134,15 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
   async getByPhoneNumberAsync(phoneNumber: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { phoneNumber },
+      include: {
+        allergies: true,
+        otps: true,
+        attendances: { include: { event: { include: { host: true, segments: true } } } },
+        segmentAttendances: { include: { segment: true, contributions: true } },
+        hostedEvents: { include: { segments: true } },
+        sentInvitations: { include: { sender: true, recipient: true } },
+        receivedInvitations: { include: { sender: true, recipient: true } },
+      },
     });
     return user ? this.mapToUser(user) : null;
   }
@@ -124,6 +159,17 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
         expiry: otp.expiry.toISOString(),
       })),
       attendances: (prismaUser.attendances || []).map((attendance: any) => ({
+        ...attendance,
+        user: this.mapToUser(attendance.user),
+        event: {
+          ...attendance.event,
+          date: attendance.event.date,
+          host: this.mapToUser(attendance.event.host),
+          segments: attendance.event.segments || [],
+          attendees: attendance.event.attendees || [],
+        },
+      })),
+      segmentAttendances: (prismaUser.segmentAttendances || []).map((attendance: any) => ({
         ...attendance,
         user: this.mapToUser(attendance.user),
         segment: {

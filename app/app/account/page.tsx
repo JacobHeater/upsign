@@ -1,27 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '../../lib/api';
-import { useAuth } from '../../lib/auth-context';
+import { apiClient } from '../lib/api';
+import { useAuth } from '../lib/auth-context';
 import type { User } from 'common/schema';
+import Link from 'next/link';
+import { Button, Card, Textarea, Input, IconButton, Tag, Icon } from '@/components/design-system';
 
 export default function AccountPage() {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
     const [editingAllergies, setEditingAllergies] = useState(false);
-    const [allergiesInput, setAllergiesInput] = useState('');
-    const [saving, setSaving] = useState(false);
-    const { logout } = useAuth();
+    const [editingAllergiesList, setEditingAllergiesList] = useState<string[]>([]);
+    const { user, loading, logout, refreshUser } = useAuth();
     const router = useRouter();
-
-    useEffect(() => {
-        apiClient
-            .getCurrentUser()
-            .then(setUser)
-            .catch(() => setUser(null))
-            .finally(() => setLoading(false));
-    }, []);
 
     const handleLogout = async () => {
         await logout();
@@ -29,49 +20,39 @@ export default function AccountPage() {
     };
 
     const handleEditAllergies = () => {
-        setAllergiesInput(user?.allergies?.map(a => a.allergy).join(', ') || '');
+        setEditingAllergiesList(user?.allergies?.map(a => a.allergy) || []);
         setEditingAllergies(true);
     };
 
     const handleCancelEdit = () => {
         setEditingAllergies(false);
-        setAllergiesInput('');
+        setEditingAllergiesList([]);
     };
 
     const handleSaveAllergies = async () => {
         if (!user) return;
 
-        setSaving(true);
         try {
-            const allergies = allergiesInput
-                .split(',')
-                .map(a => a.trim())
-                .filter(a => a.length > 0)
+            const allergies = editingAllergiesList
+                .filter(a => a.trim().length > 0)
                 .map(allergy => ({ allergy }));
 
             await apiClient.updateUser(user.id, { allergies } as any);
 
-            // Refetch user data to get updated allergies
-            const updatedUser = await apiClient.getCurrentUser();
-            if (updatedUser) {
-                setUser(updatedUser);
-            }
+            await refreshUser(); // Refresh the user data from auth context
             setEditingAllergies(false);
-            setAllergiesInput('');
+            setEditingAllergiesList([]);
         } catch (error) {
             console.error('Failed to update allergies:', error);
-            // You could add error handling UI here
-        } finally {
-            setSaving(false);
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-ink-black flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-peach-glow mx-auto mb-4"></div>
-                    <p className="text-peach-glow text-lg">Loading your account...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-accent mx-auto mb-4"></div>
+                    <p className="text-foreground text-lg">Loading your account...</p>
                 </div>
             </div>
         );
@@ -79,199 +60,169 @@ export default function AccountPage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-ink-black flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="text-6xl mb-4">🔒</div>
-                    <h1 className="text-2xl font-bold text-peach-glow mb-4">Access Denied</h1>
-                    <p className="text-peach-glow/80 mb-6">
+                    <h1 className="text-2xl font-bold text-foreground mb-4">Access Denied</h1>
+                    <p className="text-foreground/80 mb-6">
                         You need to be logged in to view your account information.
                     </p>
-                    <button
-                        onClick={() => router.push('/account/login')}
-                        className="bg-racing-red hover:bg-racing-red/80 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                    >
-                        Go to Login
-                    </button>
+                    <Button href="/account/login" variant="accent" className="px-6 py-3">Go to Login</Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-ink-black">
+        <div className="min-h-screen bg-background-secondary py-12">
             <div className="max-w-6xl mx-auto px-6 py-12">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-peach-glow mb-2">My Account</h1>
-                    <p className="text-peach-glow/70">Manage your profile and preferences</p>
+                <div className="text-center mb-12 glass-header">
+                    <div className="inline-flex items-center gap-3 mb-4 px-4 py-2 glass-header-pill">
+                        <span className="w-2 h-2 rounded-full bg-accent inline-block" />
+                        <span className="font-bold text-sm text-foreground">Account Dashboard</span>
+                        <div className="ml-2 px-2 py-0.5 rounded-full bg-secondary inline-block border border-foreground">
+                            <span className="text-xs font-semibold text-foreground">Member</span>
+                        </div>
+                    </div>
+                    <h1 className="text-4xl font-bold mb-2">My Account</h1>
+                    <div className="glass-divider" />
+                    <p className="text-foreground">Manage your profile and preferences</p>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Profile Card */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-8">
+                        <Card className="relative rounded-xl p-8 overflow-hidden" size="lg" hoverEffect="none">
+                            <div className="absolute -right-10 -top-10 w-60 h-60 rounded-full glass-blob pointer-events-none" />
                             <div className="flex items-center mb-6">
-                                <div className="w-16 h-16 bg-racing-red rounded-full flex items-center justify-center text-2xl font-bold text-white mr-4">
-                                    {user.firstName[0]}{user.lastName[0]}
+                                <div className="w-20 h-20 glass-avatar rounded-full flex items-center justify-center text-3xl font-bold text-foreground mr-4">
+                                    {/* User initials */}
+                                    {user?.firstName[0]}{user?.lastName[0]}
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-peach-glow">
-                                        {user.firstName} {user.lastName}
-                                    </h2>
-                                    <p className="text-peach-glow/70">{user.email}</p>
+                                    <h2 className="text-xl font-bold text-foreground">{user?.firstName} {user?.lastName}</h2>
+                                    <p className="text-sm text-foreground/70">{user?.email}</p>
                                 </div>
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
-                                            Phone Number
-                                        </label>
-                                        <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
-                                            {user.phoneNumber}
-                                        </p>
+                                    <div className="glass-info">
+                                        <p className="text-sm font-semibold text-foreground">Phone Number</p>
+                                        <p className="text-lg text-foreground">{user?.phoneNumber}</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
-                                            Date of Birth
-                                        </label>
-                                        <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
-                                            {user.dateOfBirth.toLocaleDateString()}
-                                        </p>
+                                    <div className="glass-info">
+                                        <p className="text-sm font-semibold text-foreground">Date of Birth</p>
+                                        <p className="text-lg text-foreground">{user?.dateOfBirth?.toLocaleDateString()}</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-1">
-                                            Account Status
-                                        </label>
-                                        <div className="flex gap-2">
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.verified
-                                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                                                }`}>
-                                                {user.verified ? '✓ Verified' : '⚠ Unverified'}
-                                            </span>
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.locked
-                                                ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                                : 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                                }`}>
-                                                {user.locked ? '🔒 Locked' : '✓ Active'}
-                                            </span>
-                                        </div>
+                                    <div className="glass-info">
+                                        <p className="text-sm font-semibold text-foreground">Account Status</p>
+                                        <p className="text-lg text-foreground flex items-center gap-2">
+                                            {user?.verified ? (
+                                                <>
+                                                    Verified
+                                                    <Icon name="check" size={20} className="text-green-500" />
+                                                </>
+                                            ) : (
+                                                'Unverified'
+                                            )}
+                                        </p>
                                     </div>
-                                    {user.lastLogin && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-peach-glow/70 mb-1">
-                                                Last Login
-                                            </label>
-                                            <p className="text-peach-glow bg-ink-black/50 px-3 py-2 rounded-lg">
-                                                {new Date(user.lastLogin).toLocaleString()}
-                                            </p>
-                                        </div>
-                                    )}
+                                    <div className="glass-info">
+                                        <p className="text-sm font-semibold text-foreground">Last Login</p>
+                                        <p className="text-lg text-foreground">{user?.lastLogin?.toISOString()}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Card>
 
                         {/* Allergies Card */}
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-8">
+                        <Card className="rounded-xl p-8 relative" size="sm" hoverEffect="none">
+                            <div className="absolute left-6 top-6 w-24 h-24 rounded-full glass-blob-sm -z-10" />
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-xl font-bold text-peach-glow">Allergies & Dietary Restrictions</h3>
+                                <h3 className="text-2xl font-bold text-foreground">🥜 Allergies & Dietary Restrictions</h3>
                                 {!editingAllergies && (
-                                    <button
-                                        onClick={handleEditAllergies}
-                                        className="text-peach-glow/70 hover:text-peach-glow text-sm font-medium transition-colors"
-                                    >
-                                        {user?.allergies && user.allergies.length > 0 ? '✏️ Edit' : '➕ Add'}
-                                    </button>
+                                    <Button onClick={handleEditAllergies} variant="primary" size="sm" className="glass-btn">Edit</Button>
                                 )}
                             </div>
 
                             {editingAllergies ? (
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-peach-glow/70 mb-2">
-                                            List your allergies (separate with commas)
-                                        </label>
-                                        <textarea
-                                            value={allergiesInput}
-                                            onChange={(e) => setAllergiesInput(e.target.value)}
-                                            placeholder="e.g. peanuts, dairy, gluten"
-                                            className="w-full border border-jungle-teal/20 px-4 py-3 rounded-lg focus:border-jungle-teal focus:outline-none resize-none"
-                                            rows={3}
-                                        />
+                                    <div className="space-y-2">
+                                        {editingAllergiesList.map((allergy, index) => (
+                                            <div key={index} className="flex items-center gap-2">
+                                                <Input
+                                                    value={allergy}
+                                                    onChange={(e) => {
+                                                        const newList = [...editingAllergiesList];
+                                                        newList[index] = e.target.value;
+                                                        setEditingAllergiesList(newList);
+                                                    }}
+                                                    placeholder="Allergy"
+                                                    className="flex-1"
+                                                />
+                                                <IconButton
+                                                    onClick={() => {
+                                                        const newList = editingAllergiesList.filter((_, i) => i !== index);
+                                                        setEditingAllergiesList(newList);
+                                                    }}
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    icon="trash"
+                                                />
+                                            </div>
+                                        ))}
+                                        <Button
+                                            onClick={() => setEditingAllergiesList([...editingAllergiesList, ''])}
+                                            variant="primary"
+                                            size="sm"
+                                            className="glass-btn"
+                                        >
+                                            + Add Allergy
+                                        </Button>
                                     </div>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={handleSaveAllergies}
-                                            disabled={saving}
-                                            className="bg-jungle-teal hover:bg-jungle-teal/80 text-ink-black px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {saving ? 'Saving...' : 'Save Changes'}
-                                        </button>
-                                        <button
-                                            onClick={handleCancelEdit}
-                                            disabled={saving}
-                                            className="bg-ink-black/50 hover:bg-ink-black/70 border border-jungle-teal/20 text-peach-glow px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            Cancel
-                                        </button>
+                                    <div className="flex gap-4 w-full lg:col-span-3">
+                                        <Button onClick={handleSaveAllergies} variant="primary" className="glass-btn flex-1">Save</Button>
+                                        <Button onClick={handleCancelEdit} variant="accent" className="glass-btn flex-1">Cancel</Button>
                                     </div>
                                 </div>
                             ) : user?.allergies && user.allergies.length > 0 ? (
                                 <div className="flex flex-wrap gap-3">
                                     {user.allergies.map((allergy, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-racing-red/10 text-racing-red px-4 py-2 rounded-lg text-sm font-medium border border-racing-red/20"
-                                        >
+                                        <Tag key={index} variant="secondary" size="sm">
                                             {allergy.allergy}
-                                        </span>
+                                        </Tag>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-peach-glow/70 text-sm">
-                                    No allergies recorded. Click "Add" to specify any allergies or dietary restrictions.
+                                <p className="text-foreground/70 text-sm italic">
+                                    No allergies recorded. Click "Edit" to specify any allergies or dietary restrictions.
                                 </p>
                             )}
-                        </div>
+                        </Card>
                     </div>
 
                     {/* Actions Sidebar */}
                     <div className="space-y-6">
-                        <div className="bg-jungle-teal/10 border border-jungle-teal/20 rounded-lg p-6">
-                            <h3 className="text-xl font-bold text-peach-glow mb-4">Quick Actions</h3>
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => router.push('/events')}
-                                    className="w-full bg-jungle-teal hover:bg-jungle-teal/80 text-ink-black px-4 py-3 rounded-lg font-medium transition-colors text-left"
-                                >
-                                    📅 View My Events
-                                </button>
-                                <button
-                                    onClick={() => router.push('/events/create')}
-                                    className="w-full bg-peach-glow hover:bg-peach-glow/80 text-ink-black px-4 py-3 rounded-lg font-medium transition-colors text-left"
-                                >
-                                    ➕ Create Event
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full bg-racing-red hover:bg-racing-red/80 text-white px-4 py-3 rounded-lg font-medium transition-colors text-left"
-                                >
-                                    🚪 Logout
-                                </button>
+                        <Card className="rounded-xl p-6" size="sm" hoverEffect="none">
+                            <h3 className="text-2xl font-bold text-foreground mb-6">⚡ Quick Actions</h3>
+                            <div className="space-y-4">
+                                <Button onClick={() => router.push('/events')} className="glass-action-btn glass-action-primary w-full px-5 py-4 text-left">📅 View My Events</Button>
+                                <Button onClick={() => router.push('/events/create')} className="glass-action-btn glass-action-primary w-full px-5 py-4 text-left">➕ Create Event</Button>
+                                <Button onClick={handleLogout} variant="accent" className="glass-action-btn glass-action-muted w-full px-5 py-4 text-left">🚪 Logout</Button>
                             </div>
-                        </div>
+                        </Card>
 
-                        <div className="bg-jungle-teal/5 border border-jungle-teal/10 rounded-lg p-6">
-                            <h3 className="text-lg font-bold text-peach-glow mb-2">Account Settings</h3>
-                            <p className="text-peach-glow/70 text-sm">
+                        <Card className="rounded-xl p-6" size="sm" hoverEffect="none">
+                            <h3 className="text-xl font-bold text-foreground mb-3">⚙️ Account Settings</h3>
+                            <p className="text-foreground text-sm">
                                 Need to update your information? Contact support for account modifications.
                             </p>
-                        </div>
+                        </Card>
                     </div>
                 </div>
             </div>

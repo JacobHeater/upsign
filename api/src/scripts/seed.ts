@@ -56,8 +56,10 @@ async function main() {
   const event1 = await prisma.event.create({
     data: {
       name: 'Summer BBQ Party',
+      description: 'A fun summer BBQ with friends and family',
       date: new Date('2025-07-15T18:00:00Z'),
       location: 'Central Park',
+      icon: '🍔',
       hostId: user1.id,
       segments: {
         create: [
@@ -104,8 +106,10 @@ async function main() {
   const event2 = await prisma.event.create({
     data: {
       name: 'Holiday Potluck',
+      description: 'Christmas potluck dinner with traditional holiday dishes',
       date: new Date('2025-12-25T12:00:00Z'),
       location: 'Community Center',
+      icon: '🎄',
       hostId: user2.id,
       segments: {
         create: [

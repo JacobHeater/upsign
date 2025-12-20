@@ -3,15 +3,17 @@ import { Router } from 'express';
 import { IApiResponse } from '../../http/response/response';
 import logger from '../../utils/logger';
 import { PrismaEventRepository } from '../../repositories/events/prisma-event-repository';
+import { PrismaEventInvitationRepository } from '../../repositories/events/prisma-event-invitation-repository';
 
 const eventRepo = new PrismaEventRepository();
+const eventInvitationRepo = new PrismaEventInvitationRepository();
 const router = Router();
 
 router.post('/', async (req, res) => {
   logger.debug('Creating event', { user: (req as any).user });
   try {
-    const { name, date, location } = req.body;
-    if (!name || !date || !location) {
+    const { name, description, date, location, icon } = req.body;
+    if (!name || !description || !date || !location) {
       const response: IApiResponse<null> = {
         success: false,
         error: 'Missing required fields: name, date, location',
@@ -22,11 +24,16 @@ router.post('/', async (req, res) => {
     const eventData: Event = {
       id: '', // Will be generated
       name,
+      description,
       date: new Date(date),
       hostId,
       host: { id: hostId } as any, // Not needed for create
       location,
+      icon: icon || '🎉',
+      createdAt: new Date(),
+      updatedAt: new Date(),
       segments: [],
+      attendees: [],
     };
     const event = await eventRepo.createAsync(eventData);
     logger.info('Event created', { eventId: event.id, userId: (req as any).user.userId });
@@ -48,6 +55,8 @@ router.post('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = (req as any).user?.userId;
+
     const event = await eventRepo.getByIdAsync(id);
     if (!event) {
       const response: IApiResponse<null> = {
@@ -56,6 +65,32 @@ router.get('/:id', async (req, res) => {
       };
       return res.status(404).json(response);
     }
+
+    // Check permissions: user must be the host or have an accepted invitation
+    if (userId) {
+      const isHost = event.hostId === userId;
+      if (!isHost) {
+        // Check if user has an accepted invitation
+        const invitations = await eventInvitationRepo.getByEventIdAsync(id);
+        const hasInvitations = invitations.some((inv) => inv.recipientId === userId);
+        const isUserAttendee = event.attendees?.some((att) => att.userId === userId);
+        if (!hasInvitations && !isUserAttendee) {
+          const response: IApiResponse<null> = {
+            success: false,
+            error: 'Event not found',
+          };
+          return res.status(404).json(response);
+        }
+      }
+    } else {
+      // No user logged in
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Event not found',
+      };
+      return res.status(404).json(response);
+    }
+
     const response: IApiResponse<any> = {
       success: true,
       data: event,
@@ -71,10 +106,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/', async (_, res) => {
+router.get('/', async (req, res) => {
   try {
-    const events = await eventRepo.getAllAsync();
-    console.log(events);
+    const userId = (req as any).user.userId;
+    const events = await eventRepo.getEventsForUserAsync(userId);
     const response: IApiResponse<any[]> = {
       success: true,
       data: events,
@@ -93,11 +128,11 @@ router.get('/', async (_, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, date, location } = req.body;
-    if (!name || !date || !location) {
+    const { name, description, date, location, icon } = req.body;
+    if (!name || !description || !date || !location) {
       const response: IApiResponse<null> = {
         success: false,
-        error: 'Missing required fields: name, date, location',
+        error: 'Missing required fields: name, description, date, location',
       };
       return res.status(400).json(response);
     }
@@ -105,11 +140,16 @@ router.put('/:id', async (req, res) => {
     const eventData: Event = {
       id,
       name,
+      description,
       date: new Date(date),
       hostId,
       host: { id: hostId } as any,
       location,
+      icon: icon || '🎉',
+      createdAt: new Date(),
+      updatedAt: new Date(),
       segments: [],
+      attendees: [],
     };
     const event = await eventRepo.updateAsync(id, eventData);
     if (!event) {

@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./app/*"],
+      "common/*": ["../common/dist/*"],
+      "common": ["../common/dist/index"]
     }
   },
   "include": [
@@ -30,5 +32,10 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "../common"
+    }
+  ]
 }

@@ -50,8 +50,11 @@ describe('PrismaUserRepository', () => {
         verified: true,
         locked: false,
         lastLogin: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         otps: [],
         attendances: [],
+        segmentAttendances: [],
         hostedEvents: [],
       };
 
@@ -64,7 +67,8 @@ describe('PrismaUserRepository', () => {
         include: {
           allergies: true,
           otps: true,
-          attendances: { include: { segment: true, contributions: true } },
+          attendances: { include: { event: { include: { host: true, segments: true } } } },
+          segmentAttendances: { include: { segment: true, contributions: true } },
           hostedEvents: { include: { segments: true } },
           sentInvitations: { include: { sender: true, recipient: true } },
           receivedInvitations: { include: { sender: true, recipient: true } },
@@ -81,8 +85,11 @@ describe('PrismaUserRepository', () => {
         verified: true,
         locked: false,
         lastLogin: null,
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
         otps: [],
         attendances: [],
+        segmentAttendances: [],
         hostedEvents: [],
         sentInvitations: [],
         receivedInvitations: [],
@@ -112,8 +119,11 @@ describe('PrismaUserRepository', () => {
           verified: true,
           locked: false,
           lastLogin: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
           otps: [],
           attendances: [],
+          segmentAttendances: [],
           hostedEvents: [],
           sentInvitations: [],
           receivedInvitations: [],
@@ -128,7 +138,8 @@ describe('PrismaUserRepository', () => {
         include: {
           allergies: true,
           otps: true,
-          attendances: { include: { segment: true, contributions: true } },
+          attendances: { include: { event: { include: { host: true, segments: true } } } },
+          segmentAttendances: { include: { segment: true, contributions: true } },
           hostedEvents: { include: { segments: true } },
           sentInvitations: { include: { sender: true, recipient: true } },
           receivedInvitations: { include: { sender: true, recipient: true } },
@@ -146,8 +157,11 @@ describe('PrismaUserRepository', () => {
           verified: true,
           locked: false,
           lastLogin: null,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
           otps: [],
           attendances: [],
+          segmentAttendances: [],
           hostedEvents: [],
           sentInvitations: [],
           receivedInvitations: [],
@@ -169,6 +183,8 @@ describe('PrismaUserRepository', () => {
         verified: false,
         locked: false,
         lastLogin: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       const createdPrismaUser = {
@@ -178,6 +194,7 @@ describe('PrismaUserRepository', () => {
         allergies: [],
         otps: [],
         attendances: [],
+        segmentAttendances: [],
         hostedEvents: [],
         sentInvitations: [],
         receivedInvitations: [],
@@ -203,7 +220,8 @@ describe('PrismaUserRepository', () => {
         include: {
           allergies: true,
           otps: true,
-          attendances: { include: { segment: true, contributions: true } },
+          attendances: { include: { event: { include: { host: true, segments: true } } } },
+          segmentAttendances: { include: { segment: true, contributions: true } },
           hostedEvents: { include: { segments: true } },
           sentInvitations: { include: { sender: true, recipient: true } },
           receivedInvitations: { include: { sender: true, recipient: true } },
@@ -226,6 +244,8 @@ describe('PrismaUserRepository', () => {
         verified: true,
         locked: false,
         lastLogin: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       (mockUserUpdate as any).mockResolvedValue({
@@ -270,6 +290,7 @@ describe('PrismaUserRepository', () => {
         ...inputUser,
         otps: [],
         attendances: [],
+        segmentAttendances: [],
         hostedEvents: [],
         sentInvitations: [],
         receivedInvitations: [],
@@ -290,6 +311,8 @@ describe('PrismaUserRepository', () => {
         verified: true,
         locked: false,
         lastLogin: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       const result = await repository.updateAsync('1', inputUser);

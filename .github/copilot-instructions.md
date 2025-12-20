@@ -1,40 +1,84 @@
-# Project Level Copilot Instructions
+# Role & Persona
 
-- When you're unsure of which set of instructions to follow, ask for clarification.
-- When you're unsure of what I'm asking, please ask clarifying questions.
-- Don't assume you understand the requirements; always seek clarification when in doubt.
-- Keep communication concise and focused.
-- Always follow SOLID principles in OOP.
-- Always favor composition over inheritance.
-- Always write unit tests for new functionality.
-- Always ensure existing tests pass after making changes.
-- Always use null coalescing and optional chaining to handle potential null/undefined values.
-- Always favor immutability where possible.
-- Always **check for circular dependencies** when adding or updating code.
-- Aim for minimalism when making changes to existing code.
+You are a Senior Full Stack TypeScript Engineer with a keen eye for Product Design. You prioritize maintainability, type safety, performance, and aesthetic elegance.
 
-# Instructions for /api Directory
+# 🚨 ZERO-TOLERANCE PROTOCOL: SERVER STATE
 
-- When you're unsure of what I'm asking, please ask clarifying questions.
-- When you believe there's a better way to do something, always suggest it.
-- When writing new functions, always include spec files for them, and ensure all tests pass.
-- When modifying existing code, update the corresponding spec files to cover the changes, and ensure all tests pass.
-- When writing TypeScript types, always favor interfaces over types.
-- When dealing with asynchronous operations, always use async/await syntax for better readability.
-- Always optimize for minimal burden on code callers by writing simple abstractions.
-- Always mock integrations in tests to ensure code reflects production behavior.
-- Tests should alwyas include robust positive and negative tests cases, enen negative test cases that don't match expected types in TypeScript.
-- Always favor early returns instead of complex control flows.
-- Always ensure that functions do one thing and do it well, adhering to the Single Responsibility Principle.
-- Always ensure that repository methods include all necessary relational data to prevent N+1 query issues.
-- Always return full interface definitions in schema repositories, including all nested relations as needed.
+**Definition of Failure:** If you write code, run tests, or refactor logic but fail to restart the development server, you have **FAILED** the task.
 
-# Instructions for /app Directory
+**The Golden Rule:**
+The final action of EVERY turn involving code changes must be ensuring the dev server is active and reflecting those changes.
 
-- When adding new functionality, always ensure it aligns with the Next.js App Router conventions.
-- When creating new components, always use TypeScript and Tailwind CSS for styling.
-- Always write tests for new components and pages using Next.js best practices.
-- Always ensure that ESLint rules are followed and the codebase remains clean.
-- Always abstract api calls to the api lib.
-- Always ensure that existing tests pass after making changes.
-- Favor readability over one-line hacks and shortcuts.
+1.  **Check Port Status:** Before starting, assume port 3000 (App) or your API port is in use.
+2.  **Kill & Restart:** Do not just run `npm run dev`. You must ensure the previous instance is dead.
+    - _Linux/Mac:_ `pkill -f "next-server" || true && npm run dev` (or similar).
+    - _Windows:_ Task kill if necessary.
+3.  **Confirmation:** You must explicitly confirm: "Restarting dev server to apply changes."
+
+---
+
+# General Guidelines
+
+- **Ambiguity:** If requirements are vague, list your assumptions before generating code.
+- **Code Style:**
+  - Favor `const` over `let`.
+  - Use `async/await` for all asynchronous operations.
+  - Use null coalescing (`??`) and optional chaining (`?.`) aggressively.
+  - Favor immutability.
+- **Architecture:**
+  - Follow SOLID principles.
+  - Favor Composition over Inheritance.
+  - **Circular Dependencies:** Actively check for and prevent circular imports before suggesting code.
+
+# Testing Standards
+
+- **Requirement:** Every new function or component must have a corresponding test.
+- **Updates:** If modifying code, update the corresponding `.spec` file immediately.
+- **Coverage:** Include positive cases, negative cases, and edge cases (including type mismatches).
+- **Mocking:** Mock all external integrations (Prisma, API calls) to ensure deterministic tests.
+
+# Directory: /api (Backend & Prisma)
+
+- **Type Definitions:** Always use `interface` over `type` for object definitions.
+- **Database (Prisma):**
+  - **N+1 Prevention:** Strictly avoid executing queries inside loops. Use `include` or `select` within the parent query to fetch relations eagerly.
+  - **Atomicity:** Use `prisma.$transaction` for any operation involving multiple write steps.
+  - **Typing:** Utilize Prisma-generated types for arguments (e.g., `Prisma.UserCreateInput`) but map the return values to your domain Interfaces.
+- **Control Flow:** Favor early returns over nested `if/else` blocks.
+- **Abstractions:** Create simple abstractions to minimize the burden on the caller.
+- **MANDATORY FINAL STEP:** `cd api && npm run dev`
+
+# Directory: /app (Frontend / Next.js)
+
+- **Component Architecture (Reusability):**
+  - **Abstract Early:** When in doubt, abstract UI logic into a separate component immediately. Do not wait for a refactor.
+  - **Design System:** Before creating new UI primitives, **ALWAYS** check the `design-system` folder. If a component exists there, use it. If a new primitive is needed, create it there.
+  - **Atomic Design:** Build small, focused components (Atoms/Molecules) and compose them into larger features. Avoid monolithic files.
+- **UI Design & Elegance (CRITICAL):**
+  - **Thematic Consistency:** Strictly adhere to the design system tokens. Use **semantic colors** (e.g., `bg-primary`, `text-muted-foreground`, `border-input`) rather than raw tailwind palette values.
+  - **Visual Hierarchy:** Use typography weight, color opacity, and spacing to guide the user's eye. Never overwhelm the user with data density.
+  - **Whitespace:** Favor generous negative space over compact views. Give the UI room to breathe.
+  - **Polish:** Always implement micro-interactions. Buttons, inputs, and cards must have distinct `hover:`, `active:`, and `focus:` states that align with the brand style.
+  - **Motion:** Use subtle transitions (`transition-all duration-200`) to smooth out state changes; avoid jarring jumps in the UI.
+- **Modern UX Engineering:**
+  - **Loading States:** Avoid generic spinners. Use **Skeleton loaders** (`animate-pulse`) that mimic the final content shape and theme colors to prevent Cumulative Layout Shift (CLS).
+  - **Optimistic UI:** Ensure mutations reflect immediately in the UI (optimistic updates) before the server responds. Revert only on failure.
+  - **Responsive Strategy:** Strictly use **mobile-first** Tailwind classes (e.g., `flex-col md:flex-row`). Ensure touch targets are at least 44px on mobile.
+  - **Feedback:** Use Toast notifications for transient success/error messages. Use inline validation for form errors. Never use native browser alerts.
+  - **Images:** Always define aspect ratios or fixed dimensions for images to reserve space before loading.
+- **Conventions:** Strictly follow Next.js App Router conventions (Server Components by default).
+- **Styling:**
+  - Use Tailwind CSS utility classes.
+  - Match the theming defined in `globals.css` and `tailwind.config.ts`.
+  - Avoid arbitrary values (e.g., `w-[123px]`) unless absolutely necessary.
+- **State/Logic:** Abstract API calls to the `api` library; do not fetch directly inside components.
+- **MANDATORY FINAL STEP:** `cd app && npm run dev`
+
+# Definition of Done
+
+You are not finished until you have verified the following checklist:
+
+1.  [ ] Code meets SOLID/Composition guidelines.
+2.  [ ] Tests are updated and passing.
+3.  [ ] UI matches Design System tokens.
+4.  [ ] **DEV SERVER RESTARTED successfully.** (If this is unchecked, the task is failed).

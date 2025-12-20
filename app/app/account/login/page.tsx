@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
+import { Button, Input, Card, Icon } from '@/components/design-system';
 
 function LoginForm() {
   const router = useRouter();
@@ -52,90 +53,74 @@ function LoginForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 px-4">
-      <h1 className="text-2xl font-bold mb-6 text-foreground">Log In</h1>
-
-      {message && (
-        <div className="mb-4 p-4 bg-primary/10 border border-primary text-primary rounded">
-          {message}
+    <div className="max-w-md mx-auto mt-12 px-4 pb-12">
+      <Card size="lg">
+        <div className="text-center mb-8">
+          <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
+            <span className="text-accent font-semibold text-sm">Welcome Back</span>
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Log In</h1>
+          <p className="text-foreground/70">Access your account to manage events</p>
         </div>
-      )}
 
-      {step === 'phone' ? (
-        <form onSubmit={handleSendOTP} className="space-y-4">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-foreground">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
-              placeholder="Enter your phone number"
-            />
+        {message && (
+          <div className="mb-6 p-4 bg-primary/10 border-2 border-primary/30 text-foreground rounded-lg shadow-md">
+            {message}
           </div>
+        )}
 
-          {error && <div className="text-destructive text-sm">{error}</div>}
+        {step === 'phone' ? (
+          <form onSubmit={handleSendOTP} className="space-y-6">
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                📱 Phone Number
+              </label>
+              <Input type="tel" id="phone" value={phone} onChange={(e: any) => setPhone(e.target.value)} required placeholder="Enter your phone number" className="w-full" />
+            </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50"
-          >
-            {isSubmitting ? 'Sending OTP...' : 'Send OTP'}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleVerifyOTP} className="space-y-4">
-          <div>
-            <label htmlFor="otp" className="block text-sm font-medium text-foreground">
-              OTP Code
-            </label>
-            <input
-              type="text"
-              id="otp"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-ring focus:border-ring bg-input"
-              placeholder="Enter the 6-digit code"
-            />
-          </div>
+            {error && (
+              <div className="p-3 bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
-          {error && <div className="text-destructive text-sm">{error}</div>}
+            <Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting ? 'Sending OTP...' : 'Send OTP'}</Button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOTP} className="space-y-6">
+            <div>
+              <label htmlFor="otp" className="block text-sm font-medium text-foreground mb-2">
+                🔐 OTP Code
+              </label>
+              <Input type="number" id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
+            </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50"
-          >
-            {isSubmitting ? 'Verifying...' : 'Verify OTP'}
-          </button>
+            {error && (
+              <div className="p-3 bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
-          <button
-            type="button"
-            onClick={() => setStep('phone')}
-            className="w-full text-sm text-secondary hover:text-accent"
-          >
-            Back to phone
-          </button>
-        </form>
-      )}
+            <Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting ? 'Verifying...' : 'Verify OTP'}</Button>
 
-      <div className="mt-6 text-center">
-        <p className="text-sm text-secondary">
-          Don't have an account?{' '}
-          <Link
-            href="/account/signup"
-            className="font-medium text-accent hover:text-destructive"
-          >
-            Sign up
-          </Link>
-        </p>
-      </div>
+            <Button type="button" onClick={() => setStep('phone')} variant="ghost" className="w-full text-foreground!">
+              <Icon name="arrowBack" size={16} text="Back to phone" />
+            </Button>
+          </form>
+        )}
+
+        <div className="mt-8 pt-6 border-t-2 border-muted/30 text-center">
+          <p className="text-sm text-foreground/70">
+            Don't have an account?{' '}
+            <Link
+              href="/account/signup"
+              className="font-bold text-primary hover:text-accent transition-colors border-b-2 border-transparent hover:border-accent"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </Card>
     </div>
   );
 }

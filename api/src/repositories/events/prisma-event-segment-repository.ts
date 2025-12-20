@@ -5,20 +5,20 @@ export class PrismaEventSegmentRepository extends PrismaRepositoryBase<EventSegm
   async getByIdAsync(id: string): Promise<EventSegment | null> {
     const eventSegment = await this.prisma.eventSegment.findUnique({
       where: { id },
-      include: { attendees: true },
+      include: { attendees: true, event: true },
     });
     return eventSegment as EventSegment | null;
   }
 
   async getAllAsync(): Promise<EventSegment[]> {
     const eventSegments = await this.prisma.eventSegment.findMany({
-      include: { attendees: true },
+      include: { attendees: true, event: true },
     });
     return eventSegments as EventSegment[];
   }
 
   async createAsync(item: EventSegment): Promise<EventSegment> {
-    const { id, attendees, event, ...data } = item;
+    const { id, attendees, event, createdAt, updatedAt, ...data } = item;
     const eventSegment = await this.prisma.eventSegment.create({
       data,
       include: { attendees: true },
@@ -27,7 +27,7 @@ export class PrismaEventSegmentRepository extends PrismaRepositoryBase<EventSegm
   }
 
   async updateAsync(id: string, item: EventSegment): Promise<EventSegment | null> {
-    const { id: _, attendees, event, ...data } = item;
+    const { id: _, attendees, event, createdAt, updatedAt, ...data } = item;
     try {
       const eventSegment = await this.prisma.eventSegment.update({
         where: { id },

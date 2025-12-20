@@ -3,7 +3,8 @@ import type {
   Event,
   EventSegment,
   EventAttendee,
-  EventAttendeeContribution,
+  EventSegmentAttendee,
+  EventSegmentAttendeeContribution,
   EventInvitation,
 } from 'common/schema';
 
@@ -63,7 +64,13 @@ class ApiClient {
       throw new Error(`API request failed: ${response.statusText}`);
     }
 
+    // Handle 204 No Content responses
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     const result = await response.json();
+
     if (!result.success) {
       throw new Error(result.error || 'API request failed');
     }
@@ -124,7 +131,9 @@ class ApiClient {
     return this.request<Event>(`/api/event/${id}`);
   }
 
-  async createEvent(event: Omit<Event, 'id' | 'host' | 'segments' | 'hostId'>) {
+  async createEvent(
+    event: Omit<Event, 'id' | 'host' | 'segments' | 'hostId' | 'createdAt' | 'updatedAt'>
+  ) {
     return this.request<Event>('/api/event', {
       method: 'POST',
       body: JSON.stringify(event),
@@ -153,7 +162,9 @@ class ApiClient {
     return this.request<EventSegment>(`/api/event-segment/${id}`);
   }
 
-  async createEventSegment(segment: Omit<EventSegment, 'id' | 'event' | 'attendees'>) {
+  async createEventSegment(
+    segment: Omit<EventSegment, 'id' | 'event' | 'attendees' | 'createdAt' | 'updatedAt'>
+  ) {
     return this.request<EventSegment>('/api/event-segment', {
       method: 'POST',
       body: JSON.stringify(segment),
@@ -185,19 +196,14 @@ class ApiClient {
     return this.request<EventAttendee>(`/api/event-attendee/${id}`);
   }
 
-  async createEventAttendee(
-    attendee: Omit<EventAttendee, 'id' | 'user' | 'segment' | 'contributions'>
-  ) {
+  async createEventAttendee(attendee: { userId: string; eventId: string }) {
     return this.request<EventAttendee>('/api/event-attendee', {
       method: 'POST',
       body: JSON.stringify(attendee),
     });
   }
 
-  async updateEventAttendee(
-    id: string,
-    attendee: Partial<Omit<EventAttendee, 'id' | 'user' | 'segment' | 'contributions'>>
-  ) {
+  async updateEventAttendee(id: string, attendee: Partial<{ userId: string; eventId: string }>) {
     return this.request<EventAttendee>(`/api/event-attendee/${id}`, {
       method: 'PUT',
       body: JSON.stringify(attendee),
@@ -210,45 +216,103 @@ class ApiClient {
     });
   }
 
-  // Event Attendee Contribution routes
-  async getEventAttendeeContributions() {
-    return this.request<EventAttendeeContribution[]>('/api/event-attendee-contribution');
+  // Event Segment Attendee routes
+  async getEventSegmentAttendees() {
+    return this.request<EventSegmentAttendee[]>('/api/event-segment-attendee');
   }
 
-  async getEventAttendeeContribution(id: string) {
-    return this.request<EventAttendeeContribution>(`/api/event-attendee-contribution/${id}`);
+  async getEventSegmentAttendee(id: string) {
+    return this.request<EventSegmentAttendee>(`/api/event-segment-attendee/${id}`);
   }
 
-  async createEventAttendeeContribution(
-    contribution: Omit<EventAttendeeContribution, 'id' | 'attendee'>
-  ) {
-    return this.request<EventAttendeeContribution>('/api/event-attendee-contribution', {
+  async createEventSegmentAttendee(attendee: { userId: string; segmentId: string }) {
+    return this.request<EventSegmentAttendee>('/api/event-segment-attendee', {
       method: 'POST',
-      body: JSON.stringify(contribution),
+      body: JSON.stringify(attendee),
     });
   }
 
-  async updateEventAttendeeContribution(
+  async updateEventSegmentAttendee(
     id: string,
-    contribution: Partial<Omit<EventAttendeeContribution, 'id' | 'attendee'>>
+    attendee: Partial<{ userId: string; segmentId: string }>
   ) {
-    return this.request<EventAttendeeContribution>(`/api/event-attendee-contribution/${id}`, {
+    return this.request<EventSegmentAttendee>(`/api/event-segment-attendee/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(contribution),
+      body: JSON.stringify(attendee),
+    });
+  }
+
+  async deleteEventSegmentAttendee(id: string) {
+    return this.request<void>(`/api/event-segment-attendee/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Event Segment Attendee Contribution routes
+  async getEventSegmentAttendeeContributions() {
+    return this.request<EventSegmentAttendeeContribution[]>(
+      '/api/event-segment-attendee-contribution'
+    );
+  }
+
+  async getEventSegmentAttendeeContribution(id: string) {
+    return this.request<EventSegmentAttendeeContribution>(
+      `/api/event-segment-attendee-contribution/${id}`
+    );
+  }
+
+  async createEventSegmentAttendeeContribution(
+    contribution: Omit<
+      EventSegmentAttendeeContribution,
+      'id' | 'eventSegmentAttendee' | 'createdAt' | 'updatedAt'
+    >
+  ) {
+    return this.request<EventSegmentAttendeeContribution>(
+      '/api/event-segment-attendee-contribution',
+      {
+        method: 'POST',
+        body: JSON.stringify(contribution),
+      }
+    );
+  }
+
+  async updateEventSegmentAttendeeContribution(
+    id: string,
+    contribution: Partial<Omit<EventSegmentAttendeeContribution, 'id' | 'eventSegmentAttendee'>>
+  ) {
+    return this.request<EventSegmentAttendeeContribution>(
+      `/api/event-segment-attendee-contribution/${id}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(contribution),
+      }
+    );
+  }
+
+  async deleteEventSegmentAttendeeContribution(id: string) {
+    return this.request<void>(`/api/event-segment-attendee-contribution/${id}`, {
+      method: 'DELETE',
     });
   }
 
   // Event Invitation routes
-  async getEventInvitations(type?: 'sent' | 'received') {
-    const query = type ? `?type=${type}` : '';
-    return this.request<EventInvitation[]>(`/api/event-invitation${query}`);
+  async getEventInvitations(type?: 'sent' | 'received', eventId?: string) {
+    const params = new URLSearchParams();
+    if (type) params.append('type', type);
+    if (eventId) params.append('eventId', eventId);
+    const query = params.toString();
+    return this.request<EventInvitation[]>(`/api/event-invitation${query ? `?${query}` : ''}`);
   }
 
   async getEventInvitation(id: string) {
     return this.request<EventInvitation>(`/api/event-invitation/${id}`);
   }
 
-  async createEventInvitation(invitation: { recipientId: string; message: string }) {
+  async createEventInvitation(invitation: {
+    phoneNumber: string;
+    eventId: string;
+    message: string;
+  }) {
     return this.request<EventInvitation>('/api/event-invitation', {
       method: 'POST',
       body: JSON.stringify(invitation),
@@ -269,6 +333,10 @@ class ApiClient {
     return this.request<void>(`/api/event-invitation/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  async getUser(id: string) {
+    return this.request<User>(`/api/user/${id}`);
   }
 
   async getCurrentUser() {

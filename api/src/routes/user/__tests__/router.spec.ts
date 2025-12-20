@@ -44,7 +44,7 @@ describe('User Router', () => {
   describe('GET /api/user/:id', () => {
     it('should get user by id', async () => {
       const response = await request(app)
-        .get('/api/user/1')
+        .get('/api/user/test-user')
         .set('Cookie', [`jwt=${token}`]);
 
       expect(response.status).toBe(200);

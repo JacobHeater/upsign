@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import { Button, Input, IconSelector, Toggle, Icon } from '@/components/design-system';
 
 // Declare Google Maps types
 declare global {
@@ -16,6 +17,8 @@ interface EventFormData {
   name: string;
   date: string;
   location: string;
+  icon: string;
+  description: string;
 }
 
 export default function CreateEventPage() {
@@ -23,10 +26,13 @@ export default function CreateEventPage() {
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
     date: '',
+    description: '',
     location: '',
+    icon: '📅',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useAutocomplete, setUseAutocomplete] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -40,19 +46,23 @@ export default function CreateEventPage() {
       }
 
       if (window.google && window.google.maps && window.google.maps.places) {
-        initializeAutocomplete();
+        // Already loaded
       } else {
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         script.async = true;
         script.defer = true;
-        script.onload = initializeAutocomplete;
         document.head.appendChild(script);
       }
     };
 
+    loadGoogleMaps();
+  }, []);
+
+  useEffect(() => {
     const initializeAutocomplete = () => {
       if (
+        useAutocomplete &&
         locationInputRef.current &&
         window.google &&
         window.google.maps &&
@@ -75,18 +85,23 @@ export default function CreateEventPage() {
             }));
           }
         });
+      } else {
+        // Cleanup
+        if (autocompleteRef.current) {
+          window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
+          autocompleteRef.current = null;
+        }
       }
     };
 
-    loadGoogleMaps();
+    initializeAutocomplete();
 
     return () => {
-      // Cleanup
       if (autocompleteRef.current) {
         window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
       }
     };
-  }, []);
+  }, [useAutocomplete]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -115,100 +130,92 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="min-h-screen bg-background-secondary py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-6">
-          <Link
+          <Button
             href="/events"
-            className="inline-flex items-center text-secondary hover:text-accent font-medium"
+            variant="link"
           >
-            <span className="mr-2">←</span>
-            Back to Events
-          </Link>
+            <Icon name="arrowBack" size={16} text="Back to Events" />
+          </Button>
         </div>
 
-        <div className="bg-card rounded-lg shadow-md p-8">
+        <div>
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🎉</div>
-            <h1 className="text-3xl font-bold text-card-foreground mb-2">Create New Event</h1>
-            <p className="text-secondary">
+            <div className="text-5xl mb-4">{formData.icon}</div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Create New Event</h1>
+            <p className="text-foreground/70">
               Plan your next gathering and start organizing segments and attendees.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-card-foreground mb-2">
-                Event Name
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                🎊 Event Name
               </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="e.g., Summer BBQ, Team Meeting"
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
-              />
+              <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="e.g., Summer BBQ, Team Meeting" className="w-full" />
             </div>
 
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-card-foreground mb-2">
-                Event Date & Time
+              <label htmlFor="description" className="block text-sm font-medium text-foreground mb-2">
+                📝 Description
               </label>
-              <input
-                type="datetime-local"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground"
-              />
+              <Input id="description" name="description" value={formData.description} onChange={handleChange} required placeholder="Describe your event" className="w-full" />
             </div>
 
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-card-foreground mb-2">
-                Location
+              <label htmlFor="icon" className="block text-sm font-medium text-foreground mb-2">
+                🎨 Event Icon
               </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-                ref={locationInputRef}
-                placeholder="Search for a location..."
-                className="block w-full px-4 py-3 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring bg-input text-foreground placeholder-muted-foreground"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Start typing to search for addresses, businesses, or landmarks (powered by Google
-                Maps)
+              <IconSelector value={formData.icon} onChange={(value) => setFormData(prev => ({ ...prev, icon: value }))} className="w-full" />
+              <p className="text-xs text-foreground/60 mt-2">
+                Choose an icon that represents your event
               </p>
             </div>
 
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
+                📅 Event Date & Time
+              </label>
+              <Input id="date" name="date" type="datetime-local" value={formData.date} onChange={handleChange} required className="w-full" />
+            </div>
+
+            <div>
+              <label htmlFor="location" className="block text-sm font-medium text-foreground mb-2">
+                📍 Location
+              </label>
+              <Input id="location" name="location" ref={locationInputRef as any} value={formData.location} onChange={handleChange} required placeholder="Search for a location..." className="w-full" autoComplete="off" key={useAutocomplete ? 'autocomplete' : 'no-autocomplete'} />
+              {useAutocomplete && (
+                <p className="text-xs text-foreground/60 mt-2">
+                  Start typing to search for addresses, businesses, or landmarks (powered by Google Maps)
+                </p>
+              )}
+              <div className="flex items-center mt-2">
+                <Toggle
+                  id="autocomplete-toggle"
+                  checked={useAutocomplete}
+                  onChange={setUseAutocomplete}
+                  className="mr-2"
+                />
+                <label htmlFor="autocomplete-toggle" className="text-xs text-foreground/60">
+                  Enable Google Maps autocomplete
+                </label>
+              </div>
+            </div>
+
             {error && (
-              <div className="bg-destructive/10 border border-destructive rounded-lg p-4">
-                <div className="text-destructive text-sm">{error}</div>
+              <div className="bg-destructive/10 border-2 border-destructive/30 rounded-lg p-4">
+                <div className="text-destructive text-sm font-medium">{error}</div>
               </div>
             )}
 
-            <div className="flex space-x-4 pt-4">
-              <Link
-                href="/events"
-                className="flex-1 flex justify-center py-3 px-4 border border-secondary rounded-lg shadow-sm text-sm font-medium text-secondary bg-card hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-accent-foreground bg-accent hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Creating...' : 'Create Event'}
-              </button>
+            <div className="flex gap-4 pt-4">
+              <Button href="/events" className="flex-1 flex justify-center py-3 px-4">Cancel</Button>
+              <Button type="submit" disabled={isSubmitting} variant="accent" className="flex-1 flex justify-center py-3 px-4">
+                {isSubmitting ? 'Creating...' : '✨ Create Event'}
+              </Button>
             </div>
           </form>
         </div>
