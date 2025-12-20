@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/design-system';
+import { Button, Icon, Tooltip } from '@/components/design-system';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../lib/auth-context';
+import { useAuth } from '@/lib/auth-context';
+import { usePendingInvitations } from '@/lib/use-pending-invitations';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { pendingCount } = usePendingInvitations();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -18,7 +20,7 @@ export default function Header() {
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 bg-background shadow-2xl border-b border-accent">
+    <header className="absolute top-0 left-0 right-0 z-10 bg-background shadow-2xl border-b border-primary-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,22 +32,38 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-2">
-            <Button href="/" className="text-primary-50 hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30 focus:outline-none" variant="ghost">
+            <Button href="/" variant="ghost">
+              <Icon name="home" size={16} className="mr-2" />
               Home
             </Button>
             {user && (
               <>
-                <Button href="/events" className="text-primary-50 hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30" variant="ghost">
+                <Button href="/events" variant="ghost">
+                  <Icon name="calendar" size={16} className="mr-2" />
                   Events
+                  {pendingCount > 0 && (
+                    <Tooltip content={`You have ${pendingCount} invitation${pendingCount === 1 ? '' : 's'} awaiting RSVP.`}>
+                      <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 inline-flex items-center justify-center">
+                        {pendingCount > 9 ? '9+' : pendingCount}
+                      </span>
+                    </Tooltip>
+                  )}
                 </Button>
-                <Button href="/account" className="text-primary-50 hover:text-accent hover:bg-muted/20 px-4 py-2 text-sm font-medium transition-all rounded-lg border border-transparent hover:border-accent/30" variant="ghost">
+                <Button href="/account" variant="ghost">
+                  <Icon name="user" size={16} className="mr-2" />
                   Account
                 </Button>
-                <Button onClick={handleLogout} variant="destructive" size="sm" className="px-4 py-2">Logout</Button>
+                <Button onClick={handleLogout} variant="ghost">
+                  <Icon name="logout" size={16} className="mr-2" />
+                  Logout
+                </Button>
               </>
             )}
             {!user && (
-              <Button href="/account/login" variant="accent" className="px-4 py-2">Login</Button>
+              <Button href="/account/login" variant="ghost" className="px-4 py-2">
+                <Icon name="user" size={16} className="mr-2" />
+                Login
+              </Button>
             )}
           </nav>
 
@@ -75,35 +93,44 @@ export default function Header() {
       </div>
 
       {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t-2 border-accent/30 bg-card/95 backdrop-blur-sm">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Button href="/" className="block px-3 py-2 text-base font-medium text-primary-50 hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30" variant="ghost" onClick={() => setIsMobileMenuOpen(false)}>
-              Home
+      <div className={`md:hidden border-t-2 border-primary-900 bg-background backdrop-blur-sm overflow-hidden transition-all duration-300 ease-in-out shadow-xl ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}>
+        <div className="px-2 pt-2 pb-3 space-y-1">
+          <Button href="/" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+            <Icon name="home" size={18} className="mr-3" />
+            Home
+          </Button>
+          {user && (
+            <>
+              <Button href="/events" variant="ghost" className="w-full justify-start relative" onClick={() => setIsMobileMenuOpen(false)}>
+                <Icon name="calendar" size={18} className="mr-3" />
+                Events
+                {pendingCount > 0 && (
+                  <Tooltip content={`You have ${pendingCount} invitation${pendingCount === 1 ? '' : 's'} awaiting RSVP.`}>
+                    <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                      {pendingCount > 9 ? '9+' : pendingCount}
+                    </span>
+                  </Tooltip>
+                )}
+              </Button>
+              <Button href="/account" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+                <Icon name="user" size={18} className="mr-3" />
+                Account
+              </Button>
+              <Button onClick={handleLogout} variant="ghost" className="w-full justify-start">
+                <Icon name="logout" size={18} className="mr-3" />
+                Logout
+              </Button>
+            </>
+          )}
+          {!user && (
+            <Button href="/account/login" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+              <Icon name="user" size={18} className="mr-3" />
+              Login
             </Button>
-            {user && (
-              <>
-                <Button href="/events" className="block px-3 py-2 text-base font-medium text-primary-50 hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30" variant="ghost" onClick={() => setIsMobileMenuOpen(false)}>
-                  Events
-                </Button>
-                <Button href="/account" className="block px-3 py-2 text-base font-medium text-primary-50 hover:text-accent hover:bg-muted/30 rounded-lg transition-all border border-transparent hover:border-accent/30" variant="ghost" onClick={() => setIsMobileMenuOpen(false)}>
-                  Account
-                </Button>
-                <Button onClick={handleLogout} variant="destructive" size="md" className="block w-full text-left px-3 py-2">Logout</Button>
-              </>
-            )}
-            {!user && (
-              <Link
-                href="/account/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 text-base font-medium text-accent-foreground bg-accent hover:bg-accent/80 rounded-lg transition-all shadow-md border border-accent"
-              >
-                Login
-              </Link>
-            )}
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </header>
   );
 }

@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { IRepository } from './irepository';
+import { ISchemaTable } from 'common/schema';
 
-export abstract class PrismaRepositoryBase<T> implements IRepository<T> {
+export abstract class PrismaRepositoryBase<T extends ISchemaTable> implements IRepository<T> {
   constructor(protected readonly prisma: PrismaClient = new PrismaClient()) {}
 
   abstract getByIdAsync(id: string): Promise<T | null>;

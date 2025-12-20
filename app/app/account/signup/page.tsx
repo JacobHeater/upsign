@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
-import { Button, Card, Input, Textarea } from '@/components/design-system';
+import { Button, Card, Input } from '@/components/design-system';
 
 interface SignupFormData {
   firstName: string;
@@ -12,7 +12,6 @@ interface SignupFormData {
   email: string;
   dateOfBirth: string;
   phoneNumber: string;
-  allergies: string;
 }
 
 export default function SignupPage() {
@@ -23,7 +22,6 @@ export default function SignupPage() {
     email: '',
     dateOfBirth: '',
     phoneNumber: '',
-    allergies: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,18 +40,13 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      const allergiesArray = formData.allergies
-        .split(',')
-        .map((a) => a.trim())
-        .filter((a) => a);
-
       await apiClient.signup({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
         phoneNumber: formData.phoneNumber,
-        allergies: allergiesArray,
+        allergies: [],
         verified: false,
         locked: false,
         lastLogin: null,
@@ -115,13 +108,6 @@ export default function SignupPage() {
               📱 Phone Number
             </label>
             <Input type="tel" id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required className="w-full" />
-          </div>
-
-          <div>
-            <label htmlFor="allergies" className="block text-sm font-medium text-foreground mb-2">
-              🥜 Allergies (comma-separated, optional)
-            </label>
-            <Textarea id="allergies" name="allergies" value={formData.allergies} onChange={(e: any) => handleChange(e)} rows={3} className="w-full" placeholder="e.g., peanuts, dairy, gluten" />
           </div>
 
           {error && (

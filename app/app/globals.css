@@ -68,7 +68,7 @@
 
 :root {
   --background: #006040;
-  --background-secondary: linear-gradient(to top, var(--primary-50), var(--primary-100));
+  --background-secondary: linear-gradient(to bottom, var(--primary-50), var(--primary-200));
   --foreground: #000000;
   --primary: #006744;
   --primary-foreground: #ffecd1;
@@ -137,6 +137,3 @@
   --ring: #ff7d00;
   --gray: #275848;
 }
-
-/* Glass card styles are implemented inline in the design-system `Card` component. */
-/* Previously the .glass-card component lived here; styles moved to `src/app/components/design-system/Card.tsx` */

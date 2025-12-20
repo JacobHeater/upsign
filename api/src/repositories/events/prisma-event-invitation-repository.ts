@@ -1,4 +1,4 @@
-import { EventInvitation, RsvpStatus } from 'common/schema';
+import { EventInvitation } from 'common/schema';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventInvitation> {
@@ -8,6 +8,7 @@ export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventI
       include: {
         sender: { include: { allergies: true } },
         recipient: { include: { allergies: true } },
+        event: true,
       },
     });
     return invitation ? this.mapToEventInvitation(invitation) : null;
@@ -18,27 +19,29 @@ export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventI
       include: {
         sender: { include: { allergies: true } },
         recipient: { include: { allergies: true } },
+        event: true,
       },
     });
     return invitations.map(this.mapToEventInvitation);
   }
 
   async createAsync(item: EventInvitation): Promise<EventInvitation> {
-    const { id, sender, recipient, ...rest } = item;
-    const data = { ...rest, senderId: sender.id, recipientId: recipient.id };
+    const { id, sender, recipient, event, createdAt, updatedAt, ...rest } = item;
+    const data = { ...rest, senderId: sender.id, recipientId: recipient.id, eventId: event.id };
     const invitation = await this.prisma.eventInvitation.create({
       data,
       include: {
         sender: { include: { allergies: true } },
         recipient: { include: { allergies: true } },
+        event: true,
       },
     });
     return this.mapToEventInvitation(invitation);
   }
 
   async updateAsync(id: string, item: EventInvitation): Promise<EventInvitation | null> {
-    const { id: _, sender, recipient, ...rest } = item;
-    const data = { ...rest, senderId: sender.id, recipientId: recipient.id };
+    const { id: _, sender, recipient, event, ...rest } = item;
+    const data = { ...rest, senderId: sender.id, recipientId: recipient.id, eventId: event.id };
     try {
       const invitation = await this.prisma.eventInvitation.update({
         where: { id },
@@ -46,6 +49,7 @@ export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventI
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       return this.mapToEventInvitation(invitation);
@@ -71,6 +75,7 @@ export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventI
       include: {
         sender: { include: { allergies: true } },
         recipient: { include: { allergies: true } },
+        event: true,
       },
     });
     return invitations.map(this.mapToEventInvitation);
@@ -82,6 +87,19 @@ export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventI
       include: {
         sender: { include: { allergies: true } },
         recipient: { include: { allergies: true } },
+        event: true,
+      },
+    });
+    return invitations.map(this.mapToEventInvitation);
+  }
+
+  async getByEventIdAsync(eventId: string): Promise<EventInvitation[]> {
+    const invitations = await this.prisma.eventInvitation.findMany({
+      where: { eventId },
+      include: {
+        sender: { include: { allergies: true } },
+        recipient: { include: { allergies: true } },
+        event: true,
       },
     });
     return invitations.map(this.mapToEventInvitation);

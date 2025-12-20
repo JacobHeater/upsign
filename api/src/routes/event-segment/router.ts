@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { IApiResponse } from '../../http/response/response';
 import { PrismaEventSegmentRepository } from '../../repositories/events/prisma-event-segment-repository';
+import { PrismaEventRepository } from '../../repositories/events/prisma-event-repository';
 import logger from '../../utils/logger';
 
 const eventSegmentRepo = new PrismaEventSegmentRepository();
+const eventRepo = new PrismaEventRepository();
 
 const router = Router();
 
@@ -17,12 +19,29 @@ router.post('/', async (req, res) => {
       };
       return res.status(400).json(response);
     }
+    const event = await eventRepo.getByIdAsync(eventId);
+    if (!event) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Event not found',
+      };
+      return res.status(404).json(response);
+    }
+    if (event.hostId !== (req as any).user.userId) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Forbidden: Only event host can create segments',
+      };
+      return res.status(403).json(response);
+    }
     const eventSegmentData = {
       id: '', // Will be generated
       name,
       eventId,
       event: {} as any, // Not needed for create
       attendees: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     const eventSegment = await eventSegmentRepo.createAsync(eventSegmentData);
     logger.info('Event segment created', {
@@ -98,12 +117,29 @@ router.put('/:id', async (req, res) => {
       };
       return res.status(400).json(response);
     }
+    const event = await eventRepo.getByIdAsync(eventId);
+    if (!event) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Event not found',
+      };
+      return res.status(404).json(response);
+    }
+    if (event.hostId !== (req as any).user.userId) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Forbidden: Only event host can update segments',
+      };
+      return res.status(403).json(response);
+    }
     const eventSegmentData = {
       id,
       name,
       eventId,
       event: {} as any,
       attendees: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     const eventSegment = await eventSegmentRepo.updateAsync(id, eventSegmentData);
     if (!eventSegment) {
@@ -130,6 +166,22 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const existingSegment = await eventSegmentRepo.getByIdAsync(id);
+    if (!existingSegment) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Event segment not found',
+      };
+      return res.status(404).json(response);
+    }
+    const event = await eventRepo.getByIdAsync(existingSegment.eventId);
+    if (!event || event.hostId !== (req as any).user.userId) {
+      const response: IApiResponse<null> = {
+        success: false,
+        error: 'Forbidden: Only event host can delete segments',
+      };
+      return res.status(403).json(response);
+    }
     const success = await eventSegmentRepo.deleteAsync(id);
     if (!success) {
       const response: IApiResponse<null> = {

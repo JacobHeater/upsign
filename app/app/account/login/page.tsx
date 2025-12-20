@@ -3,9 +3,9 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { apiClient } from '@/app/lib/api';
-import { useAuth } from '@/app/lib/auth-context';
-import { Button, Input } from '@/components/design-system';
+import { apiClient } from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
+import { Button, Input, Card, Icon } from '@/components/design-system';
 
 function LoginForm() {
   const router = useRouter();
@@ -54,7 +54,7 @@ function LoginForm() {
 
   return (
     <div className="max-w-md mx-auto mt-12 px-4 pb-12">
-      <div className="bg-card rounded-xl shadow-xl p-8 border-2 border-accent/30">
+      <Card size="lg">
         <div className="text-center mb-8">
           <div className="inline-block mb-4 px-4 py-2 bg-accent/10 border-2 border-accent/30 rounded-full">
             <span className="text-accent font-semibold text-sm">Welcome Back</span>
@@ -64,7 +64,7 @@ function LoginForm() {
         </div>
 
         {message && (
-          <div className="mb-6 p-4 bg-primary/10 border-2 border-primary/30 text-primary-foreground rounded-lg shadow-md">
+          <div className="mb-6 p-4 bg-primary/10 border-2 border-primary/30 text-foreground rounded-lg shadow-md">
             {message}
           </div>
         )}
@@ -92,7 +92,7 @@ function LoginForm() {
               <label htmlFor="otp" className="block text-sm font-medium text-foreground mb-2">
                 🔐 OTP Code
               </label>
-              <Input id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
+              <Input type="number" id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
             </div>
 
             {error && (
@@ -103,7 +103,9 @@ function LoginForm() {
 
             <Button type="submit" disabled={isSubmitting} className="w-full">{isSubmitting ? 'Verifying...' : 'Verify OTP'}</Button>
 
-            <Button type="button" onClick={() => setStep('phone')} variant="ghost" className="w-full text-sm">← Back to phone</Button>
+            <Button type="button" onClick={() => setStep('phone')} variant="ghost" className="w-full text-foreground!">
+              <Icon name="arrowBack" size={16} text="Back to phone" />
+            </Button>
           </form>
         )}
 
@@ -118,7 +120,7 @@ function LoginForm() {
             </Link>
           </p>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

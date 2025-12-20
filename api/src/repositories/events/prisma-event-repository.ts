@@ -6,6 +6,11 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
     const event = await this.prisma.event.findUnique({
       where: { id },
       include: {
+        attendees: {
+          include: {
+            user: { include: { allergies: true } },
+          },
+        },
         segments: {
           include: {
             attendees: {
@@ -25,6 +30,11 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
   async getAllAsync(): Promise<Event[]> {
     const events = await this.prisma.event.findMany({
       include: {
+        attendees: {
+          include: {
+            user: { include: { allergies: true } },
+          },
+        },
         segments: {
           include: {
             attendees: {
@@ -41,12 +51,72 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
     return events.map(this.mapToEvent);
   }
 
+  async getEventsForUserAsync(userId: string): Promise<Event[]> {
+    const events = await this.prisma.event.findMany({
+      where: {
+        OR: [
+          { hostId: userId },
+          { attendees: { some: { userId: userId } } },
+          {
+            segments: {
+              some: {
+                attendees: {
+                  some: {
+                    userId: userId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            invitations: {
+              some: {
+                recipientId: userId,
+                rsvpStatus: 'Accepted',
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        attendees: {
+          include: {
+            user: { include: { allergies: true } },
+          },
+        },
+        segments: {
+          include: {
+            attendees: {
+              include: {
+                user: { include: { allergies: true } },
+                contributions: true,
+              },
+            },
+          },
+        },
+        host: { include: { allergies: true } },
+        invitations: {
+          include: {
+            sender: { include: { allergies: true } },
+            recipient: { include: { allergies: true } },
+          },
+        },
+      },
+    });
+    return events.map(this.mapToEvent);
+  }
+
   async createAsync(item: Event): Promise<Event> {
-    const { id, segments, host, ...rest } = item;
+    const { id, segments, host, attendees, createdAt, updatedAt, ...rest } = item;
     const data = { ...rest, hostId: host.id };
     const event = await this.prisma.event.create({
       data,
       include: {
+        attendees: {
+          include: {
+            user: { include: { allergies: true } },
+          },
+        },
         segments: {
           include: {
             attendees: {
@@ -64,13 +134,18 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
   }
 
   async updateAsync(id: string, item: Event): Promise<Event | null> {
-    const { id: _, segments, host, ...rest } = item;
+    const { id: _, segments, host, attendees, createdAt, updatedAt, ...rest } = item;
     const data = { ...rest, date: new Date(rest.date), hostId: host.id };
     try {
       const event = await this.prisma.event.update({
         where: { id },
         data,
         include: {
+          attendees: {
+            include: {
+              user: { include: { allergies: true } },
+            },
+          },
           segments: {
             include: {
               attendees: {
@@ -117,6 +192,18 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
           expiry: otp.expiry.toISOString(),
         })),
       },
+      attendees: (prismaEvent.attendees || []).map((attendee: any) => ({
+        ...attendee,
+        user: {
+          ...attendee.user,
+          dateOfBirth: attendee.user.dateOfBirth,
+          lastLogin: attendee.user.lastLogin?.toISOString() || null,
+          otps: (attendee.user.otps || []).map((otp: any) => ({
+            ...otp,
+            expiry: otp.expiry.toISOString(),
+          })),
+        },
+      })),
       segments: (prismaEvent.segments || []).map((segment: any) => ({
         ...segment,
         attendees: (segment.attendees || []).map((attendee: any) => ({

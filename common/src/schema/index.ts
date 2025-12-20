@@ -1,5 +1,10 @@
-export interface User {
+export interface ISchemaTable {
   id: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface User extends ISchemaTable {
   firstName: string;
   lastName: string;
   email: string;
@@ -11,75 +16,82 @@ export interface User {
   allergies?: UserAllergy[];
   otps?: UserOtp[];
   attendances?: EventAttendee[];
+  segmentAttendances?: EventSegmentAttendee[];
   hostedEvents?: Event[];
 }
 
-export interface UserAllergy {
-  id: string;
+export interface UserAllergy extends ISchemaTable {
   userId: string;
   allergy: string;
   user: User;
 }
 
-export interface UserOtp {
-  id: string;
+export interface UserOtp extends ISchemaTable {
   userId: string;
   user: User;
   otp: string;
   expiry: string;
+  consumed: boolean;
 }
 
-export interface Event {
-  id: string;
+export interface Event extends ISchemaTable {
   name: string;
+  description: string;
   date: Date;
+  icon: string;
   hostId: string;
   host: User;
   location: string;
   segments: EventSegment[];
+  attendees?: EventAttendee[];
 }
 
-export interface EventSegment {
-  id: string;
+export interface EventSegment extends ISchemaTable {
   name: string;
   eventId: string;
   event?: Event;
-  attendees: EventAttendee[];
+  attendees: EventSegmentAttendee[];
 }
 
-export const RsvpStatus = {
-  Pending: 'Pending',
-  Accepted: 'Accepted',
-  Declined: 'Declined',
-} as const;
+export type RsvpStatus = 'Pending' | 'Accepted' | 'Declined';
 
-export type RsvpStatus = (typeof RsvpStatus)[keyof typeof RsvpStatus];
-
-export interface EventInvitation {
-  id: string;
+export interface EventInvitation extends ISchemaTable {
   senderId: string;
   sender: User;
   recipientId: string;
   recipient: User;
+  eventId: string;
+  event: Event;
   message: string;
   viewed: boolean;
   rsvpStatus: RsvpStatus;
 }
 
-export interface EventAttendee {
-  id: string;
+export interface EventAttendee extends ISchemaTable {
   userId: string;
-  segmentId: string;
+  eventId: string;
   user: User;
-  segment: EventSegment;
-  contributions: EventAttendeeContribution[];
+  event: Event;
 }
 
-export interface EventAttendeeContribution {
-  id: string;
+export interface EventSegmentAttendee extends ISchemaTable {
+  userId: string;
+  user: User;
+  segmentId: string;
+  segment: EventSegment;
+  contributions: EventSegmentAttendeeContribution[];
+}
+
+export interface EventSegmentAttendeeContribution extends ISchemaTable {
   item: string;
   description: string;
   quantity: number;
-  attendeeId: string;
-  attendee: EventAttendee;
+  eventSegmentAttendeeId: string;
+  eventSegmentAttendee: EventSegmentAttendee;
+}
+
+export interface ChatMessage {
+  userId: string;
+  message: string;
+  timestamp: Date;
 }

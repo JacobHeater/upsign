@@ -42,6 +42,10 @@ describe('Account Router', () => {
       mockUserRepo.PrismaUserRepository.prototype.getByPhoneNumberAsync.mockResolvedValue(mockUser);
       mockOtpRepo.PrismaUserOtpRepository.prototype.getValidOtpAsync.mockResolvedValue(mockOtp);
       mockOtpRepo.PrismaUserOtpRepository.prototype.deleteOtpAsync.mockResolvedValue(true);
+      mockUserRepo.PrismaUserRepository.prototype.updateAsync.mockResolvedValue({
+        ...mockUser,
+        verified: true,
+      });
 
       const response = await request(app)
         .post('/api/account/login/otp/verify')
@@ -59,6 +63,10 @@ describe('Account Router', () => {
       );
       expect(mockOtpRepo.PrismaUserOtpRepository.prototype.deleteOtpAsync).toHaveBeenCalledWith(
         'otp1'
+      );
+      expect(mockUserRepo.PrismaUserRepository.prototype.updateAsync).toHaveBeenCalledWith(
+        'user1',
+        expect.objectContaining({ verified: true, lastLogin: expect.any(Date) })
       );
     });
   });

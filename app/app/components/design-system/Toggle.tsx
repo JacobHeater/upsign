@@ -3,13 +3,16 @@ import React from 'react';
 interface ToggleProps {
     checked: boolean;
     onChange: (checked: boolean) => void;
+    id?: string;
+    className?: string;
 }
 
-export function Toggle({ checked, onChange }: ToggleProps) {
+export function Toggle({ checked, onChange, id, className }: ToggleProps) {
     return (
-        <label className="flex items-center gap-2 text-sm cursor-pointer">
+        <label id={id} className={`flex items-center gap-2 text-sm cursor-pointer ${className || ''}`}>
             <div className="relative inline-block w-10 h-6">
                 <input
+                    id={id}
                     type="checkbox"
                     checked={checked}
                     onChange={(e) => onChange(e.target.checked)}

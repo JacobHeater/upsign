@@ -13,8 +13,11 @@ const mockUser = {
   verified: true,
   locked: false,
   lastLogin: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
   otps: [],
   attendances: [],
+  segmentAttendances: [],
   hostedEvents: [],
 };
 
@@ -52,11 +55,14 @@ describe('PrismaEventRepository', () => {
       const mockPrismaEvent = {
         id: '1',
         name: 'Test Event',
+        description: 'Test Description',
         date: new Date('2023-01-01'),
+        icon: '🎉',
         hostId: 'user1',
         host: mockUser,
         location: 'Test Location',
         segments: [],
+        attendees: [],
       };
 
       (mockEventFindUnique as any).mockResolvedValue(mockPrismaEvent);
@@ -66,6 +72,11 @@ describe('PrismaEventRepository', () => {
       expect(mockEventFindUnique).toHaveBeenCalledWith({
         where: { id: '1' },
         include: {
+          attendees: {
+            include: {
+              user: { include: { allergies: true } },
+            },
+          },
           segments: {
             include: {
               attendees: {
@@ -82,11 +93,14 @@ describe('PrismaEventRepository', () => {
       expect(result).toEqual({
         id: '1',
         name: 'Test Event',
+        description: 'Test Description',
         date: new Date('2023-01-01'),
+        icon: '🎉',
         hostId: 'user1',
         host: { ...mockUser, allergies: [] },
         location: 'Test Location',
         segments: [],
+        attendees: [],
       });
     });
 
@@ -105,11 +119,14 @@ describe('PrismaEventRepository', () => {
         {
           id: '1',
           name: 'Test Event',
+          description: 'Test Description',
           date: new Date('2023-01-01'),
+          icon: '🎉',
           hostId: 'user1',
           host: mockUser,
           location: 'Test Location',
           segments: [],
+          attendees: [],
         },
       ];
 
@@ -119,6 +136,11 @@ describe('PrismaEventRepository', () => {
 
       expect(mockEventFindMany).toHaveBeenCalledWith({
         include: {
+          attendees: {
+            include: {
+              user: { include: { allergies: true } },
+            },
+          },
           segments: {
             include: {
               attendees: {
@@ -136,11 +158,14 @@ describe('PrismaEventRepository', () => {
         {
           id: '1',
           name: 'Test Event',
+          description: 'Test Description',
           date: new Date('2023-01-01'),
+          icon: '🎉',
           hostId: 'user1',
           host: { ...mockUser, allergies: [] },
           location: 'Test Location',
           segments: [],
+          attendees: [],
         },
       ]);
     });
@@ -151,11 +176,16 @@ describe('PrismaEventRepository', () => {
       const inputEvent: Event = {
         id: '1',
         name: 'Test Event',
+        description: 'Test Description',
         date: new Date('2023-01-01'),
+        icon: '🎉',
         hostId: 'user1',
         host: { ...mockUser, allergies: [] },
         location: 'Test Location',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         segments: [],
+        attendees: [],
       };
 
       const createdPrismaEvent = { ...inputEvent, host: { ...inputEvent.host, allergies: [] } };
@@ -167,11 +197,18 @@ describe('PrismaEventRepository', () => {
       expect(mockEventCreate).toHaveBeenCalledWith({
         data: {
           name: 'Test Event',
+          description: 'Test Description',
           date: new Date('2023-01-01'),
+          icon: '🎉',
           hostId: 'user1',
           location: 'Test Location',
         },
         include: {
+          attendees: {
+            include: {
+              user: { include: { allergies: true } },
+            },
+          },
           segments: {
             include: {
               attendees: {
@@ -197,11 +234,16 @@ describe('PrismaEventRepository', () => {
       const inputEvent: Event = {
         id: '1',
         name: 'Updated Event',
+        description: 'Updated Description',
         date: new Date('2023-01-01'),
+        icon: '🎊',
         hostId: 'user1',
         host: { ...mockUser, allergies: [] },
         location: 'Updated Location',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         segments: [],
+        attendees: [],
       };
 
       (mockEventUpdate as any).mockResolvedValue({
@@ -215,11 +257,18 @@ describe('PrismaEventRepository', () => {
         where: { id: '1' },
         data: {
           name: 'Updated Event',
+          description: 'Updated Description',
           date: new Date('2023-01-01'),
+          icon: '🎊',
           hostId: 'user1',
           location: 'Updated Location',
         },
         include: {
+          attendees: {
+            include: {
+              user: { include: { allergies: true } },
+            },
+          },
           segments: {
             include: {
               attendees: {
@@ -242,11 +291,16 @@ describe('PrismaEventRepository', () => {
       const inputEvent: Event = {
         id: '1',
         name: 'Updated Event',
+        description: 'Updated Description',
         date: new Date('2023-01-01'),
+        icon: '🎉',
         hostId: 'user1',
         host: { ...mockUser, allergies: [] },
         location: 'Updated Location',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         segments: [],
+        attendees: [],
       };
 
       const result = await repository.updateAsync('1', inputEvent);

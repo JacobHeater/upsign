@@ -1,11 +1,20 @@
 {
     "name": "common",
+    "private": true,
     "version": "1.0.0",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js",
-        "./schema": "./dist/schema/index.js"
+        ".": {
+            "types": "./src/index.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        },
+        "./schema": {
+            "default": "./dist/schema/index.js",
+            "import": "./dist/schema/index.js",
+            "types": "./dist/schema/index.d.ts"
+        }
     },
     "scripts": {
         "build": "tsc",

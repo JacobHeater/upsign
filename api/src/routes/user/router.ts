@@ -11,7 +11,10 @@ router.get('/me', async (req: AuthRequest, res) => {
     logger.info('Fetching current user', { userId: req.user!.userId });
     const userRepository = new PrismaUserRepository();
     const user = await userRepository.getByIdAsync(req.user!.userId);
-    logger.info(`User found: ${user?.id}`, { userId: req.user!.userId });
+    logger.info(
+      `User found: ${user?.id}, verified: ${user?.verified}, lastLogin: ${user?.lastLogin}`,
+      { userId: req.user!.userId }
+    );
     const response: IApiResponse<typeof user> = { success: true, data: user };
     res.json(response);
   } catch (error) {
@@ -27,10 +30,23 @@ router.post('/', (req, res) => {
   res.status(201).json(response);
 });
 
-router.get('/:id', (req, res) => {
-  // Handle fetching a user by ID
-  const response: IApiResponse<null> = { success: true };
-  res.status(200).json(response);
+router.get('/:id', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+    logger.info('Fetching user by ID', { userId: id, requesterId: req.user!.userId });
+    const userRepository = new PrismaUserRepository();
+    const user = await userRepository.getByIdAsync(id);
+    if (!user) {
+      const response: IApiResponse<null> = { success: false, error: 'User not found' };
+      return res.status(404).json(response);
+    }
+    const response: IApiResponse<typeof user> = { success: true, data: user };
+    res.json(response);
+  } catch (error) {
+    logger.error('Error fetching user by ID', error, { userId: req.params.id });
+    const response: IApiResponse<null> = { success: false, error: 'Failed to fetch user' };
+    res.status(500).json(response);
+  }
 });
 
 router.get('/', (req, res) => {

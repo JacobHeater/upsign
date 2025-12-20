@@ -37,6 +37,8 @@ describe('PrismaEventSegmentRepository', () => {
         id: '1',
         name: 'Test Segment',
         eventId: 'event1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         attendees: [],
       };
 
@@ -46,7 +48,7 @@ describe('PrismaEventSegmentRepository', () => {
 
       expect(mockEventSegmentFindUnique).toHaveBeenCalledWith({
         where: { id: '1' },
-        include: { attendees: true },
+        include: { attendees: true, event: true },
       });
       expect(result).toEqual(mockEventSegment);
     });
@@ -67,6 +69,8 @@ describe('PrismaEventSegmentRepository', () => {
           id: '1',
           name: 'Test Segment',
           eventId: 'event1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
           attendees: [],
         },
       ];
@@ -76,7 +80,7 @@ describe('PrismaEventSegmentRepository', () => {
       const result = await repository.getAllAsync();
 
       expect(mockEventSegmentFindMany).toHaveBeenCalledWith({
-        include: { attendees: true },
+        include: { attendees: true, event: true },
       });
       expect(result).toEqual(mockEventSegments);
     });
@@ -88,6 +92,8 @@ describe('PrismaEventSegmentRepository', () => {
         id: '1',
         name: 'Test Segment',
         eventId: 'event1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         attendees: [],
       };
 
@@ -114,6 +120,8 @@ describe('PrismaEventSegmentRepository', () => {
         id: '1',
         name: 'Updated Segment',
         eventId: 'event1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         attendees: [],
       };
 
@@ -141,6 +149,8 @@ describe('PrismaEventSegmentRepository', () => {
         id: '1',
         name: 'Updated Segment',
         eventId: 'event1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
         attendees: [],
       };
 

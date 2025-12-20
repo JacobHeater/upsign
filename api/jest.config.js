@@ -5,4 +5,5 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
   globalSetup: '<rootDir>/globalSetup.js',
   globalTeardown: '<rootDir>/globalTeardown.js',
+  maxWorkers: 1,
 };

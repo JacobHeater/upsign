@@ -85,6 +85,18 @@ router.post('/login/otp/verify', async (req, res) => {
   // Delete the used OTP
   await otpRepo.deleteOtpAsync(validOtp.id);
 
+  // Mark user as verified and update last login
+  logger.info('Updating user verification status', {
+    userId: user.id,
+    currentVerified: user.verified,
+  });
+  await userRepo.updateAsync(user.id, {
+    ...user,
+    verified: true,
+    lastLogin: new Date(),
+  });
+  logger.info('User verification update completed', { userId: user.id });
+
   const token = jwt.sign({ userId: user.id }, JWT_SECRET);
 
   res.cookie('jwt', token, {

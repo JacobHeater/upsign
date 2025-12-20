@@ -1,8 +1,8 @@
-const chroma = require('chroma-js');
+import chroma from 'chroma-js';
 
 const baseColor = '#006744';
 
-const shades = {};
+const shades: Record<string, string> = {};
 
 const baseHsl = chroma(baseColor).hsl();
 
@@ -12,7 +12,7 @@ const baseS = baseHsl[1];
 
 const baseH = baseHsl[0];
 
-const lightness = {
+const lightness: Record<string, number> = {
   50: 0.97,
   100: 0.94,
   200: 0.86,

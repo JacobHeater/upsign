@@ -1,4 +1,6 @@
-export interface IRepository<T> {
+import { ISchemaTable } from 'common';
+
+export interface IRepository<T extends ISchemaTable> {
   getByIdAsync(id: string): Promise<T | null>;
   getAllAsync(): Promise<T[]>;
   createAsync(item: T): Promise<T>;

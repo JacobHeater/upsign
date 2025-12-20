@@ -1,30 +1,30 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { PrismaEventAttendeeContributionRepository } from '../prisma-event-attendee-contribution-repository';
-import { EventAttendeeContribution } from 'common/schema';
+import { PrismaEventSegmentAttendeeContributionRepository } from '../prisma-event-segment-attendee-contribution-repository';
+import { EventSegmentAttendeeContribution } from 'common/schema';
 
-const mockEventAttendeeContributionFindUnique = jest.fn();
-const mockEventAttendeeContributionFindMany = jest.fn();
-const mockEventAttendeeContributionCreate = jest.fn();
-const mockEventAttendeeContributionUpdate = jest.fn();
-const mockEventAttendeeContributionDelete = jest.fn();
+const mockEventSegmentAttendeeContributionFindUnique = jest.fn();
+const mockEventSegmentAttendeeContributionFindMany = jest.fn();
+const mockEventSegmentAttendeeContributionCreate = jest.fn();
+const mockEventSegmentAttendeeContributionUpdate = jest.fn();
+const mockEventSegmentAttendeeContributionDelete = jest.fn();
 
 jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
-    eventAttendeeContribution: {
-      findUnique: mockEventAttendeeContributionFindUnique,
-      findMany: mockEventAttendeeContributionFindMany,
-      create: mockEventAttendeeContributionCreate,
-      update: mockEventAttendeeContributionUpdate,
-      delete: mockEventAttendeeContributionDelete,
+    eventSegmentAttendeeContribution: {
+      findUnique: mockEventSegmentAttendeeContributionFindUnique,
+      findMany: mockEventSegmentAttendeeContributionFindMany,
+      create: mockEventSegmentAttendeeContributionCreate,
+      update: mockEventSegmentAttendeeContributionUpdate,
+      delete: mockEventSegmentAttendeeContributionDelete,
     },
   })),
 }));
 
-describe('PrismaEventAttendeeContributionRepository', () => {
-  let repository: PrismaEventAttendeeContributionRepository;
+describe('PrismaEventSegmentAttendeeContributionRepository', () => {
+  let repository: PrismaEventSegmentAttendeeContributionRepository;
 
   beforeEach(() => {
-    repository = new PrismaEventAttendeeContributionRepository();
+    repository = new PrismaEventSegmentAttendeeContributionRepository();
   });
 
   afterEach(() => {
@@ -33,16 +33,20 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
   describe('getByIdAsync', () => {
     it('should return an event attendee contribution when found', async () => {
-      const mockEventAttendeeContribution: EventAttendeeContribution = {
+      const mockEventAttendeeContribution: EventSegmentAttendeeContribution = {
         id: '1',
         item: 'Test Item',
         description: 'Test Description',
         quantity: 1,
-        attendeeId: 'attendee1',
-        attendee: {
+        eventSegmentAttendeeId: 'attendee1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        eventSegmentAttendee: {
           id: 'attendee1',
           userId: 'user1',
           segmentId: 'segment1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
           user: {
             id: 'user1',
             email: 'test@example.com',
@@ -54,6 +58,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             verified: true,
             locked: false,
             lastLogin: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             otps: [],
             attendances: [],
             hostedEvents: [],
@@ -62,27 +68,33 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             id: 'segment1',
             name: 'Test Segment',
             eventId: 'event1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             attendees: [],
           },
           contributions: [],
         },
       };
 
-      (mockEventAttendeeContributionFindUnique as any).mockResolvedValue(
+      (mockEventSegmentAttendeeContributionFindUnique as any).mockResolvedValue(
         mockEventAttendeeContribution
       );
 
       const result = await repository.getByIdAsync('1');
 
-      expect(mockEventAttendeeContributionFindUnique).toHaveBeenCalledWith({
+      expect(mockEventSegmentAttendeeContributionFindUnique).toHaveBeenCalledWith({
         where: { id: '1' },
-        include: { attendee: true },
+        include: {
+          eventSegmentAttendee: {
+            include: { user: true },
+          },
+        },
       });
       expect(result).toEqual(mockEventAttendeeContribution);
     });
 
     it('should return null when event attendee contribution not found', async () => {
-      (mockEventAttendeeContributionFindUnique as any).mockResolvedValue(null);
+      (mockEventSegmentAttendeeContributionFindUnique as any).mockResolvedValue(null);
 
       const result = await repository.getByIdAsync('1');
 
@@ -92,17 +104,21 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
   describe('getAllAsync', () => {
     it('should return all event attendee contributions', async () => {
-      const mockEventAttendeeContributions: EventAttendeeContribution[] = [
+      const mockEventAttendeeContributions: EventSegmentAttendeeContribution[] = [
         {
           id: '1',
           item: 'Test Item',
           description: 'Test Description',
           quantity: 1,
-          attendeeId: 'attendee1',
-          attendee: {
+          eventSegmentAttendeeId: 'attendee1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          eventSegmentAttendee: {
             id: 'attendee1',
             userId: 'user1',
             segmentId: 'segment1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             user: {
               id: 'user1',
               email: 'test@example.com',
@@ -114,6 +130,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
               verified: true,
               locked: false,
               lastLogin: null,
+              createdAt: new Date(),
+              updatedAt: new Date(),
               otps: [],
               attendances: [],
               hostedEvents: [],
@@ -122,6 +140,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
               id: 'segment1',
               name: 'Test Segment',
               eventId: 'event1',
+              createdAt: new Date(),
+              updatedAt: new Date(),
               attendees: [],
             },
             contributions: [],
@@ -129,14 +149,18 @@ describe('PrismaEventAttendeeContributionRepository', () => {
         },
       ];
 
-      (mockEventAttendeeContributionFindMany as any).mockResolvedValue(
+      (mockEventSegmentAttendeeContributionFindMany as any).mockResolvedValue(
         mockEventAttendeeContributions
       );
 
       const result = await repository.getAllAsync();
 
-      expect(mockEventAttendeeContributionFindMany).toHaveBeenCalledWith({
-        include: { attendee: true },
+      expect(mockEventSegmentAttendeeContributionFindMany).toHaveBeenCalledWith({
+        include: {
+          eventSegmentAttendee: {
+            include: { user: true },
+          },
+        },
       });
       expect(result).toEqual(mockEventAttendeeContributions);
     });
@@ -144,16 +168,20 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
   describe('createAsync', () => {
     it('should create and return an event attendee contribution', async () => {
-      const inputEventAttendeeContribution: EventAttendeeContribution = {
+      const inputEventAttendeeContribution: EventSegmentAttendeeContribution = {
         id: '1',
         item: 'Test Item',
         description: 'Test Description',
         quantity: 1,
-        attendeeId: 'attendee1',
-        attendee: {
+        eventSegmentAttendeeId: 'attendee1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        eventSegmentAttendee: {
           id: 'attendee1',
           userId: 'user1',
           segmentId: 'segment1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
           user: {
             id: 'user1',
             email: 'test@example.com',
@@ -165,6 +193,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             verified: true,
             locked: false,
             lastLogin: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             otps: [],
             attendances: [],
             hostedEvents: [],
@@ -173,6 +203,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             id: 'segment1',
             name: 'Test Segment',
             eventId: 'event1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             attendees: [],
           },
           contributions: [],
@@ -181,23 +213,27 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
       const createdEventAttendeeContribution = {
         ...inputEventAttendeeContribution,
-        attendee: inputEventAttendeeContribution.attendee,
+        eventSegmentAttendee: inputEventAttendeeContribution.eventSegmentAttendee,
       };
 
-      (mockEventAttendeeContributionCreate as any).mockResolvedValue(
+      (mockEventSegmentAttendeeContributionCreate as any).mockResolvedValue(
         createdEventAttendeeContribution
       );
 
       const result = await repository.createAsync(inputEventAttendeeContribution);
 
-      expect(mockEventAttendeeContributionCreate).toHaveBeenCalledWith({
+      expect(mockEventSegmentAttendeeContributionCreate).toHaveBeenCalledWith({
         data: {
           item: 'Test Item',
           description: 'Test Description',
           quantity: 1,
-          attendeeId: 'attendee1',
+          eventSegmentAttendeeId: 'attendee1',
         },
-        include: { attendee: true },
+        include: {
+          eventSegmentAttendee: {
+            include: { user: true },
+          },
+        },
       });
       expect(result).toEqual(createdEventAttendeeContribution);
     });
@@ -205,16 +241,20 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
   describe('updateAsync', () => {
     it('should update and return the event attendee contribution', async () => {
-      const inputEventAttendeeContribution: EventAttendeeContribution = {
+      const inputEventAttendeeContribution: EventSegmentAttendeeContribution = {
         id: '1',
         item: 'Updated Item',
         description: 'Updated Description',
         quantity: 2,
-        attendeeId: 'attendee1',
-        attendee: {
+        eventSegmentAttendeeId: 'attendee1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        eventSegmentAttendee: {
           id: 'attendee1',
           userId: 'user1',
           segmentId: 'segment1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
           user: {
             id: 'user1',
             email: 'test@example.com',
@@ -226,6 +266,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             verified: true,
             locked: false,
             lastLogin: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             otps: [],
             attendances: [],
             hostedEvents: [],
@@ -234,6 +276,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             id: 'segment1',
             name: 'Test Segment',
             eventId: 'event1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             attendees: [],
           },
           contributions: [],
@@ -242,41 +286,49 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
       const updatedEventAttendeeContribution = {
         ...inputEventAttendeeContribution,
-        attendee: inputEventAttendeeContribution.attendee,
+        eventSegmentAttendee: inputEventAttendeeContribution.eventSegmentAttendee,
       };
 
-      (mockEventAttendeeContributionUpdate as any).mockResolvedValue(
+      (mockEventSegmentAttendeeContributionUpdate as any).mockResolvedValue(
         updatedEventAttendeeContribution
       );
 
       const result = await repository.updateAsync('1', inputEventAttendeeContribution);
 
-      expect(mockEventAttendeeContributionUpdate).toHaveBeenCalledWith({
+      expect(mockEventSegmentAttendeeContributionUpdate).toHaveBeenCalledWith({
         where: { id: '1' },
         data: {
           item: 'Updated Item',
           description: 'Updated Description',
           quantity: 2,
-          attendeeId: 'attendee1',
+          eventSegmentAttendeeId: 'attendee1',
         },
-        include: { attendee: true },
+        include: {
+          eventSegmentAttendee: {
+            include: { user: true },
+          },
+        },
       });
       expect(result).toEqual(updatedEventAttendeeContribution);
     });
 
     it('should return null when update fails', async () => {
-      (mockEventAttendeeContributionUpdate as any).mockRejectedValue(new Error('Not found'));
+      (mockEventSegmentAttendeeContributionUpdate as any).mockRejectedValue(new Error('Not found'));
 
-      const inputEventAttendeeContribution: EventAttendeeContribution = {
+      const inputEventAttendeeContribution: EventSegmentAttendeeContribution = {
         id: '1',
         item: 'Updated Item',
         description: 'Updated Description',
         quantity: 2,
-        attendeeId: 'attendee1',
-        attendee: {
+        eventSegmentAttendeeId: 'attendee1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        eventSegmentAttendee: {
           id: 'attendee1',
           userId: 'user1',
           segmentId: 'segment1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
           user: {
             id: 'user1',
             email: 'test@example.com',
@@ -288,6 +340,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             verified: true,
             locked: false,
             lastLogin: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             otps: [],
             attendances: [],
             hostedEvents: [],
@@ -296,6 +350,8 @@ describe('PrismaEventAttendeeContributionRepository', () => {
             id: 'segment1',
             name: 'Test Segment',
             eventId: 'event1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             attendees: [],
           },
           contributions: [],
@@ -310,18 +366,18 @@ describe('PrismaEventAttendeeContributionRepository', () => {
 
   describe('deleteAsync', () => {
     it('should delete the event attendee contribution and return true', async () => {
-      (mockEventAttendeeContributionDelete as any).mockResolvedValue({} as any);
+      (mockEventSegmentAttendeeContributionDelete as any).mockResolvedValue({} as any);
 
       const result = await repository.deleteAsync('1');
 
-      expect(mockEventAttendeeContributionDelete).toHaveBeenCalledWith({
+      expect(mockEventSegmentAttendeeContributionDelete).toHaveBeenCalledWith({
         where: { id: '1' },
       });
       expect(result).toBe(true);
     });
 
     it('should return false when delete fails', async () => {
-      (mockEventAttendeeContributionDelete as any).mockRejectedValue(new Error('Not found'));
+      (mockEventSegmentAttendeeContributionDelete as any).mockRejectedValue(new Error('Not found'));
 
       const result = await repository.deleteAsync('1');
 

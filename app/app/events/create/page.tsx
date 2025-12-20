@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
-import { Button, Input } from '@/components/design-system';
+import { Button, Input, IconSelector, Toggle, Icon } from '@/components/design-system';
 
 // Declare Google Maps types
 declare global {
@@ -17,6 +17,8 @@ interface EventFormData {
   name: string;
   date: string;
   location: string;
+  icon: string;
+  description: string;
 }
 
 export default function CreateEventPage() {
@@ -24,10 +26,13 @@ export default function CreateEventPage() {
   const [formData, setFormData] = useState<EventFormData>({
     name: '',
     date: '',
+    description: '',
     location: '',
+    icon: '📅',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useAutocomplete, setUseAutocomplete] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -41,19 +46,23 @@ export default function CreateEventPage() {
       }
 
       if (window.google && window.google.maps && window.google.maps.places) {
-        initializeAutocomplete();
+        // Already loaded
       } else {
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
         script.async = true;
         script.defer = true;
-        script.onload = initializeAutocomplete;
         document.head.appendChild(script);
       }
     };
 
+    loadGoogleMaps();
+  }, []);
+
+  useEffect(() => {
     const initializeAutocomplete = () => {
       if (
+        useAutocomplete &&
         locationInputRef.current &&
         window.google &&
         window.google.maps &&
@@ -76,18 +85,23 @@ export default function CreateEventPage() {
             }));
           }
         });
+      } else {
+        // Cleanup
+        if (autocompleteRef.current) {
+          window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
+          autocompleteRef.current = null;
+        }
       }
     };
 
-    loadGoogleMaps();
+    initializeAutocomplete();
 
     return () => {
-      // Cleanup
       if (autocompleteRef.current) {
         window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
       }
     };
-  }, []);
+  }, [useAutocomplete]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -119,18 +133,17 @@ export default function CreateEventPage() {
     <div className="min-h-screen bg-background-secondary py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="mb-6">
-          <Link
+          <Button
             href="/events"
-            className="inline-flex items-center text-primary hover:text-accent font-bold transition-colors px-4 py-2 rounded-lg hover:bg-primary/10 border border-primary/30"
+            variant="link"
           >
-            <span className="mr-2">←</span>
-            Back to Events
-          </Link>
+            <Icon name="arrowBack" size={16} text="Back to Events" />
+          </Button>
         </div>
 
         <div>
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🎉</div>
+            <div className="text-5xl mb-4">{formData.icon}</div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Create New Event</h1>
             <p className="text-foreground/70">
               Plan your next gathering and start organizing segments and attendees.
@@ -146,6 +159,23 @@ export default function CreateEventPage() {
             </div>
 
             <div>
+              <label htmlFor="description" className="block text-sm font-medium text-foreground mb-2">
+                📝 Description
+              </label>
+              <Input id="description" name="description" value={formData.description} onChange={handleChange} required placeholder="Describe your event" className="w-full" />
+            </div>
+
+            <div>
+              <label htmlFor="icon" className="block text-sm font-medium text-foreground mb-2">
+                🎨 Event Icon
+              </label>
+              <IconSelector value={formData.icon} onChange={(value) => setFormData(prev => ({ ...prev, icon: value }))} className="w-full" />
+              <p className="text-xs text-foreground/60 mt-2">
+                Choose an icon that represents your event
+              </p>
+            </div>
+
+            <div>
               <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
                 📅 Event Date & Time
               </label>
@@ -156,10 +186,23 @@ export default function CreateEventPage() {
               <label htmlFor="location" className="block text-sm font-medium text-foreground mb-2">
                 📍 Location
               </label>
-              <Input id="location" name="location" ref={locationInputRef as any} value={formData.location} onChange={handleChange} required placeholder="Search for a location..." className="w-full" />
-              <p className="text-xs text-foreground/60 mt-2">
-                Start typing to search for addresses, businesses, or landmarks (powered by Google Maps)
-              </p>
+              <Input id="location" name="location" ref={locationInputRef as any} value={formData.location} onChange={handleChange} required placeholder="Search for a location..." className="w-full" autoComplete="off" key={useAutocomplete ? 'autocomplete' : 'no-autocomplete'} />
+              {useAutocomplete && (
+                <p className="text-xs text-foreground/60 mt-2">
+                  Start typing to search for addresses, businesses, or landmarks (powered by Google Maps)
+                </p>
+              )}
+              <div className="flex items-center mt-2">
+                <Toggle
+                  id="autocomplete-toggle"
+                  checked={useAutocomplete}
+                  onChange={setUseAutocomplete}
+                  className="mr-2"
+                />
+                <label htmlFor="autocomplete-toggle" className="text-xs text-foreground/60">
+                  Enable Google Maps autocomplete
+                </label>
+              </div>
             </div>
 
             {error && (

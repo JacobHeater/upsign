@@ -13,6 +13,8 @@ const mockUser = {
   verified: true,
   locked: false,
   lastLogin: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
   otps: [],
   attendances: [],
   hostedEvents: [],
@@ -57,7 +59,9 @@ describe('PrismaEventInvitationRepository', () => {
         recipientId: 'user2',
         message: 'Test message',
         viewed: false,
-        rsvpStatus: RsvpStatus.Pending,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Pending',
         sender: mockUser,
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
       };
@@ -71,6 +75,7 @@ describe('PrismaEventInvitationRepository', () => {
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result).toEqual({
@@ -108,7 +113,9 @@ describe('PrismaEventInvitationRepository', () => {
           recipientId: 'user2',
           message: 'Test message 1',
           viewed: false,
-          rsvpStatus: RsvpStatus.Pending,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rsvpStatus: 'Pending',
           sender: mockUser,
           recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
         },
@@ -118,7 +125,9 @@ describe('PrismaEventInvitationRepository', () => {
           recipientId: 'user1',
           message: 'Test message 2',
           viewed: true,
-          rsvpStatus: RsvpStatus.Accepted,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rsvpStatus: 'Accepted',
           sender: { ...mockUser, id: 'user2', email: 'jane@example.com' },
           recipient: mockUser,
         },
@@ -132,6 +141,7 @@ describe('PrismaEventInvitationRepository', () => {
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result).toHaveLength(2);
@@ -146,20 +156,52 @@ describe('PrismaEventInvitationRepository', () => {
         sender: mockUser,
         recipientId: 'user2',
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
+        eventId: 'event1',
+        event: {
+          id: 'event1',
+          name: 'Test Event',
+          description: 'Test Description',
+          date: new Date(),
+          hostId: 'user1',
+          location: 'Test Location',
+          icon: '🎉',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          host: mockUser,
+          segments: [],
+        },
         message: 'Test message',
         viewed: false,
-        rsvpStatus: RsvpStatus.Pending,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Pending',
       };
 
       const createdInvitation = {
         id: 'inv1',
         senderId: 'user1',
         recipientId: 'user2',
+        eventId: 'event1',
         message: 'Test message',
         viewed: false,
-        rsvpStatus: RsvpStatus.Pending,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Pending',
         sender: mockUser,
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
+        event: {
+          id: 'event1',
+          name: 'Test Event',
+          description: 'Test Description',
+          date: new Date(),
+          hostId: 'user1',
+          location: 'Test Location',
+          icon: '🎉',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          host: mockUser,
+          segments: [],
+        },
       };
 
       mockEventInvitationCreate.mockResolvedValue(createdInvitation);
@@ -170,13 +212,15 @@ describe('PrismaEventInvitationRepository', () => {
         data: {
           senderId: 'user1',
           recipientId: 'user2',
+          eventId: 'event1',
           message: 'Test message',
           viewed: false,
-          rsvpStatus: RsvpStatus.Pending,
+          rsvpStatus: 'Pending',
         },
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result?.id).toBe('inv1');
@@ -191,20 +235,52 @@ describe('PrismaEventInvitationRepository', () => {
         sender: mockUser,
         recipientId: 'user2',
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
+        eventId: 'event1',
+        event: {
+          id: 'event1',
+          name: 'Test Event',
+          description: 'Test Description',
+          date: new Date(),
+          hostId: 'user1',
+          location: 'Test Location',
+          icon: '🎉',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          host: mockUser,
+          segments: [],
+        },
         message: 'Updated message',
         viewed: true,
-        rsvpStatus: RsvpStatus.Accepted,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Accepted',
       };
 
       const updatedInvitation = {
         id: 'inv1',
         senderId: 'user1',
         recipientId: 'user2',
+        eventId: 'event1',
         message: 'Updated message',
         viewed: true,
-        rsvpStatus: RsvpStatus.Accepted,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Accepted',
         sender: mockUser,
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
+        event: {
+          id: 'event1',
+          name: 'Test Event',
+          description: 'Test Description',
+          date: new Date(),
+          hostId: 'user1',
+          location: 'Test Location',
+          icon: '🎉',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          host: mockUser,
+          segments: [],
+        },
       };
 
       mockEventInvitationUpdate.mockResolvedValue(updatedInvitation);
@@ -216,13 +292,17 @@ describe('PrismaEventInvitationRepository', () => {
         data: {
           senderId: 'user1',
           recipientId: 'user2',
+          eventId: 'event1',
           message: 'Updated message',
           viewed: true,
-          rsvpStatus: RsvpStatus.Accepted,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rsvpStatus: 'Accepted',
         },
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result?.message).toBe('Updated message');
@@ -237,9 +317,25 @@ describe('PrismaEventInvitationRepository', () => {
         sender: mockUser,
         recipientId: 'user2',
         recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
+        eventId: 'event1',
+        event: {
+          id: 'event1',
+          name: 'Test Event',
+          description: 'Test Description',
+          date: new Date(),
+          hostId: 'user1',
+          location: 'Test Location',
+          icon: '🎉',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          host: mockUser,
+          segments: [],
+        },
         message: 'Test message',
         viewed: false,
-        rsvpStatus: RsvpStatus.Pending,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        rsvpStatus: 'Pending',
       };
 
       const result = await repository.updateAsync('inv1', inputInvitation);
@@ -278,7 +374,9 @@ describe('PrismaEventInvitationRepository', () => {
           recipientId: 'user2',
           message: 'Test message',
           viewed: false,
-          rsvpStatus: RsvpStatus.Pending,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rsvpStatus: 'Pending',
           sender: mockUser,
           recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
         },
@@ -293,6 +391,7 @@ describe('PrismaEventInvitationRepository', () => {
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result).toHaveLength(1);
@@ -308,7 +407,9 @@ describe('PrismaEventInvitationRepository', () => {
           recipientId: 'user2',
           message: 'Test message',
           viewed: false,
-          rsvpStatus: RsvpStatus.Pending,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          rsvpStatus: 'Pending',
           sender: mockUser,
           recipient: { ...mockUser, id: 'user2', email: 'jane@example.com' },
         },
@@ -323,6 +424,7 @@ describe('PrismaEventInvitationRepository', () => {
         include: {
           sender: { include: { allergies: true } },
           recipient: { include: { allergies: true } },
+          event: true,
         },
       });
       expect(result).toHaveLength(1);

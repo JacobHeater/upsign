@@ -43,12 +43,15 @@ describe('Event Router', () => {
         .set('Cookie', [`jwt=${token}`])
         .send({
           name: 'Test Event',
+          description: 'Test Description',
           date: '2023-01-01',
           location: 'Test Location',
+          icon: '🎂',
         });
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
+      expect(response.body.data.icon).toBe('🎂');
     });
   });
 
@@ -63,12 +66,17 @@ describe('Event Router', () => {
   });
 
   describe('GET /api/event', () => {
-    it('should get all events', async () => {
+    it('should get events for the authenticated user', async () => {
       const response = await request(app)
         .get('/api/event')
         .set('Cookie', [`jwt=${token}`]);
 
       expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(Array.isArray(response.body.data)).toBe(true);
+      // Should include the event created in the POST test
+      expect(response.body.data.length).toBeGreaterThan(0);
+      expect(response.body.data[0]).toHaveProperty('name', 'Test Event');
     });
   });
 
@@ -79,6 +87,7 @@ describe('Event Router', () => {
         .set('Cookie', [`jwt=${token}`])
         .send({
           name: 'Updated Event',
+          description: 'Updated Description',
           date: '2023-01-01',
           location: 'Updated Location',
         });

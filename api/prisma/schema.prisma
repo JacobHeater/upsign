@@ -14,7 +14,6 @@ model User {
   id            String   @id @default(uuid())
   firstName     String
   lastName      String
-  allergies     UserAllergy[]
   email         String   @unique
   dateOfBirth   DateTime
   phoneNumber   String   @unique
@@ -22,11 +21,13 @@ model User {
   locked        Boolean  @default(false)
   lastLogin     DateTime?
 
+  allergies     UserAllergy[]
   otps          UserOtp[]
-  attendances   EventAttendee[]
   hostedEvents  Event[]
   sentInvitations    EventInvitation[] @relation("SentInvitations")
   receivedInvitations EventInvitation[] @relation("ReceivedInvitations")
+  attendances EventAttendee[]
+  segmentAttendances EventSegmentAttendee[]
 }
 
 model UserAllergy {
@@ -39,10 +40,9 @@ model UserAllergy {
 model UserOtp {
   id       String   @id @default(uuid())
   userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   otp      String
   expiry   DateTime
-
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, otp])
 }
@@ -50,51 +50,63 @@ model UserOtp {
 model Event {
   id        String   @id @default(uuid())
   name      String
+  description String
   date      DateTime
+  icon      String
   hostId    String
-  location  String
-
   host      User     @relation(fields: [hostId], references: [id])
+  location  String
   segments  EventSegment[]
+  invitations EventInvitation[]
+  attendees EventAttendee[]
+}
+
+model EventAttendee {
+  id      String @id @default(uuid())
+  userId  String
+  eventId String
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventSegment {
   id        String   @id @default(uuid())
   name      String
   eventId   String
-
   event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  attendees EventAttendee[]
+  attendees EventSegmentAttendee[]
 }
 
-model EventAttendee {
+model EventSegmentAttendee {
   id           String   @id @default(uuid())
   userId       String
   segmentId    String
 
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   segment      EventSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
-  contributions EventAttendeeContribution[]
+  contributions EventSegmentAttendeeContribution[]
 }
 
-model EventAttendeeContribution {
+model EventSegmentAttendeeContribution {
   id          String   @id @default(uuid())
   item        String
   description String
   quantity    Int
-  attendeeId  String
+  eventSegmentAttendeeId  String
 
-  attendee    EventAttendee @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+  eventSegmentAttendee    EventSegmentAttendee @relation(fields: [eventSegmentAttendeeId], references: [id], onDelete: Cascade)
 }
 
 model EventInvitation {
   id          String   @id @default(uuid())
   senderId    String
+  sender      User     @relation("SentInvitations", fields: [senderId], references: [id])
   recipientId String
+  recipient   User     @relation("ReceivedInvitations", fields: [recipientId], references: [id])
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   message     String
   viewed      Boolean  @default(false)
   rsvpStatus  String   @default("Pending")
-
-  sender      User     @relation("SentInvitations", fields: [senderId], references: [id])
-  recipient   User     @relation("ReceivedInvitations", fields: [recipientId], references: [id])
 }
