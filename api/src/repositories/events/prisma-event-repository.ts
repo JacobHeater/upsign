@@ -1,4 +1,4 @@
-import { Event } from 'common/schema';
+import { Event } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
@@ -133,9 +133,11 @@ export class PrismaEventRepository extends PrismaRepositoryBase<Event> {
     return this.mapToEvent(event);
   }
 
-  async updateAsync(id: string, item: Event): Promise<Event | null> {
+  async updateAsync(id: string, item: Partial<Event>): Promise<Event | null> {
     const { id: _, segments, host, attendees, createdAt, updatedAt, ...rest } = item;
-    const data = { ...rest, date: new Date(rest.date), hostId: host.id };
+    const data: any = { ...rest, updatedAt: new Date() };
+    if (rest.date) data.date = new Date(rest.date);
+    if (host) data.hostId = host.id;
     try {
       const event = await this.prisma.event.update({
         where: { id },

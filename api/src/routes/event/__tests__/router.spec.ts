@@ -8,20 +8,23 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const userRepo = new PrismaUserRepository();
 
 describe('Event Router', () => {
-  const token = jwt.sign({ userId: 'test-user' }, JWT_SECRET, { expiresIn: '1h' });
+  const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+  let token: string;
+  let eventName: string;
 
   beforeAll(async () => {
+    eventName = `Test Event ${Date.now()}`;
     // Create test user
     console.log('Creating user');
     try {
       const user = await userRepo.createAsync({
-        id: 'test-user',
+        id: `test-user-${Date.now()}`,
         firstName: 'Test',
         lastName: 'User',
         allergies: [],
-        email: 'test-event-999@example.com',
+        email: `test-event-${Date.now()}@example.com`,
         dateOfBirth: new Date(),
-        phoneNumber: '9999999999',
+        phoneNumber: `9999999999${Date.now()}`,
         verified: true,
         locked: false,
         lastLogin: null,
@@ -29,6 +32,7 @@ describe('Event Router', () => {
         attendances: [],
         hostedEvents: [],
       } as any);
+      token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
       console.log('User created', user.id);
     } catch (e) {
       console.log('User create failed', e);
@@ -42,7 +46,7 @@ describe('Event Router', () => {
         .post('/api/event')
         .set('Cookie', [`jwt=${token}`])
         .send({
-          name: 'Test Event',
+          name: eventName,
           description: 'Test Description',
           date: '2023-01-01',
           location: 'Test Location',
@@ -76,7 +80,7 @@ describe('Event Router', () => {
       expect(Array.isArray(response.body.data)).toBe(true);
       // Should include the event created in the POST test
       expect(response.body.data.length).toBeGreaterThan(0);
-      expect(response.body.data[0]).toHaveProperty('name', 'Test Event');
+      expect(response.body.data.some((e: any) => e.name === eventName)).toBe(true);
     });
   });
 

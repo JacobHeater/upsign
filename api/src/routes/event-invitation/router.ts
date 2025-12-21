@@ -1,4 +1,4 @@
-import { EventInvitation, EventAttendee } from 'common/schema';
+import { EventInvitation, EventAttendee } from 'common';
 import { Router } from 'express';
 import { IApiResponse } from '../../http/response/response';
 import logger from '../../utils/logger';

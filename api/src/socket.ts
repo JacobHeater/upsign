@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import logger from './utils/logger';
+import type { EventChatMessage, EventChatMessageReaction } from 'common';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -109,7 +110,7 @@ class SocketManager {
       });
 
       // Handle sending chat messages
-      socket.on('send-message', (data: { message: string }) => {
+      socket.on('send-message', (message: EventChatMessage) => {
         const eventId = socket.data.eventId;
         if (!eventId) {
           logger.warn('Attempted to send message without being in an event room', {
@@ -120,12 +121,108 @@ class SocketManager {
         }
 
         // Emit to all users in the event room
-        this.emitToEvent(eventId, 'new-message', {
-          userId,
-          message: data.message,
-          timestamp: new Date(),
-        });
+        this.emitToEvent(eventId, 'new-message', message);
         logger.debug('Chat message sent', { userId, eventId, socketId: socket.id });
+      });
+
+      // Handle message reactions
+      socket.on('message-reaction', (reaction: EventChatMessageReaction) => {
+        const eventId = socket.data.eventId;
+        if (!eventId) {
+          logger.warn('Attempted to react to message without being in an event room', {
+            userId,
+            socketId: socket.id,
+          });
+          return;
+        }
+
+        // Emit to all users in the event room
+        this.emitToEvent(eventId, 'message-reaction-update', reaction);
+        logger.debug('Message reaction added', {
+          userId,
+          eventId,
+          messageId: reaction.messageId,
+          socketId: socket.id,
+        });
+      });
+
+      // Handle message reaction removal
+      socket.on('remove-reaction', (reactionId: string) => {
+        const eventId = socket.data.eventId;
+        if (!eventId) {
+          logger.warn('Attempted to remove reaction without being in an event room', {
+            userId,
+            socketId: socket.id,
+          });
+          return;
+        }
+
+        // Emit to all users in the event room
+        this.emitToEvent(eventId, 'remove-reaction', reactionId);
+        logger.debug('Message reaction removed', {
+          userId,
+          eventId,
+          reactionId,
+          socketId: socket.id,
+        });
+      });
+
+      // Handle editing chat messages
+      socket.on('edit-message', (data: { messageId: string; newMessage: string }) => {
+        const eventId = socket.data.eventId;
+        if (!eventId) {
+          logger.warn('Attempted to edit message without being in an event room', {
+            userId,
+            socketId: socket.id,
+          });
+          return;
+        }
+
+        // Emit to all users in the event room
+        this.emitToEvent(eventId, 'message-edited', {
+          messageId: data.messageId,
+          newMessage: data.newMessage,
+        });
+        logger.debug('Chat message edited', {
+          userId,
+          eventId,
+          messageId: data.messageId,
+          socketId: socket.id,
+        });
+      });
+
+      // Handle typing start
+      socket.on('typing-start', () => {
+        const eventId = socket.data.eventId;
+        const userId = socket.data.userId;
+        if (!eventId) {
+          logger.warn('Attempted to start typing without being in an event room', {
+            userId,
+            socketId: socket.id,
+          });
+          return;
+        }
+
+        // Emit to all users in the event room except the sender
+        socket.to(`event-${eventId}`).emit('typing-start', { userId });
+        logger.debug('User started typing', { userId, eventId, socketId: socket.id });
+      });
+
+      // Handle typing stop
+      socket.on('typing-stop', () => {
+        const eventId = socket.data.eventId;
+        const userId = socket.data.userId;
+        if (!eventId) {
+          logger.warn('Attempted to stop typing without being in an event room', {
+            userId,
+            socketId: socket.id,
+          });
+          return;
+        }
+
+        // Emit to all users in the event room except the sender
+        socket.to(`event-${eventId}`).emit('typing-stop', { userId });
+        logger.debug('User stopped typing', { userId, eventId, socketId: socket.id });
       });
 
       socket.on('disconnect', () => {

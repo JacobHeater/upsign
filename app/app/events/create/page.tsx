@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { apiClient } from '@/lib/api';
-import { Button, Input, IconSelector, Toggle, Icon } from '@/components/design-system';
+import { Button, Input, Toggle, Icon } from '@/components/design-system';
+import EmojiPicker, { EmojiStyle } from 'emoji-picker-react';
 
 // Declare Google Maps types
 declare global {
@@ -35,6 +35,30 @@ export default function CreateEventPage() {
   const [useAutocomplete, setUseAutocomplete] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleDocClick(e: MouseEvent) {
+      if (!pickerRef.current) return;
+      if (!(pickerRef.current as HTMLElement).contains(e.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setShowEmojiPicker(false);
+      }
+    }
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleDocClick);
+      document.addEventListener('keydown', handleKey);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleDocClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [showEmojiPicker]);
 
   useEffect(() => {
     // Load Google Maps API
@@ -169,9 +193,36 @@ export default function CreateEventPage() {
               <label htmlFor="icon" className="block text-sm font-medium text-foreground mb-2">
                 🎨 Event Icon
               </label>
-              <IconSelector value={formData.icon} onChange={(value) => setFormData(prev => ({ ...prev, icon: value }))} className="w-full" />
+              <div className="relative">
+                <Button
+                  variant="white"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowEmojiPicker(!showEmojiPicker);
+                  }}
+                  className="w-full p-3 border border-input rounded-lg bg-background text-left flex items-center gap-3 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <span className="text-2xl">{formData.icon}</span>
+                  <span className="text-sm">Click to choose event icon</span>
+                  <Icon name="chevronDown" size={16} className="ml-auto" />
+                </Button>
+                {showEmojiPicker && (
+                  <div ref={pickerRef} className="absolute top-full left-0 z-50 mt-1 w-full">
+                    <EmojiPicker
+                      onEmojiClick={(emojiData) => {
+                        setFormData(prev => ({ ...prev, icon: emojiData.emoji }));
+                        setShowEmojiPicker(false);
+                      }}
+                      width="100%"
+                      height={400}
+                      skinTonesDisabled={true}
+                      emojiStyle={EmojiStyle.NATIVE}
+                    />
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-foreground/60 mt-2">
-                Choose an icon that represents your event
+                Choose an emoji that represents your event
               </p>
             </div>
 
@@ -212,8 +263,8 @@ export default function CreateEventPage() {
             )}
 
             <div className="flex gap-4 pt-4">
-              <Button href="/events" className="flex-1 flex justify-center py-3 px-4">Cancel</Button>
-              <Button type="submit" disabled={isSubmitting} variant="accent" className="flex-1 flex justify-center py-3 px-4">
+              <Button href="/events" variant='accent' className="flex-1 flex justify-center py-3 px-4">Cancel</Button>
+              <Button type="submit" disabled={isSubmitting} variant="primary" className="flex-1 flex justify-center py-3 px-4">
                 {isSubmitting ? 'Creating...' : '✨ Create Event'}
               </Button>
             </div>

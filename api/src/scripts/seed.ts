@@ -12,7 +12,7 @@ async function main() {
       lastName: 'Doe',
       email: 'john.doe@example.com',
       dateOfBirth: new Date('1990-01-01'),
-      phoneNumber: '+1234567890',
+      phoneNumber: '5555551212',
       verified: true,
       locked: false,
       lastLogin: new Date(),
@@ -28,7 +28,7 @@ async function main() {
       lastName: 'Smith',
       email: 'jane.smith@example.com',
       dateOfBirth: new Date('1985-05-15'),
-      phoneNumber: '+1234567891',
+      phoneNumber: '5555551213',
       verified: true,
       locked: false,
       lastLogin: new Date(),
@@ -44,7 +44,7 @@ async function main() {
       lastName: 'Johnson',
       email: 'bob.johnson@example.com',
       dateOfBirth: new Date('1992-08-20'),
-      phoneNumber: '+1234567892',
+      phoneNumber: '5555551214',
       verified: false,
       locked: false,
     },
@@ -151,12 +151,86 @@ async function main() {
 
   console.log('Created events:', event1.id, event2.id);
 
+  // Create sample chat messages
+  const message1 = await prisma.eventChatMessage.create({
+    data: {
+      userId: user2.id,
+      eventId: event1.id,
+      message: 'Looking forward to the BBQ!',
+    },
+  });
+
+  const message2 = await prisma.eventChatMessage.create({
+    data: {
+      userId: user1.id,
+      eventId: event2.id,
+      message: 'What should I bring for the potluck?',
+    },
+  });
+
+  console.log('Created chat messages:', message1.id, message2.id);
+
+  // Create sample reactions
+  await prisma.eventChatMessageReaction.create({
+    data: {
+      messageId: message1.id,
+      userId: user1.id,
+      reaction: '👍',
+    },
+  });
+
+  await prisma.eventChatMessageReaction.create({
+    data: {
+      messageId: message2.id,
+      userId: user3.id,
+      reaction: '🍗',
+    },
+  });
+
+  console.log('Created chat message reactions');
+
+  // Create sample invitations
+  await prisma.eventInvitation.create({
+    data: {
+      senderId: user1.id,
+      recipientId: user3.id,
+      eventId: event2.id,
+      message: 'You should join the holiday potluck!',
+      viewed: false,
+      rsvpStatus: 'Pending',
+    },
+  });
+
+  await prisma.eventInvitation.create({
+    data: {
+      senderId: user2.id,
+      recipientId: user1.id,
+      eventId: event1.id,
+      message: 'Come to my BBQ party!',
+      viewed: true,
+      rsvpStatus: 'Accepted',
+    },
+  });
+
+  console.log('Created event invitations');
+
   // Create sample OTP for user1
   await prisma.userOtp.create({
     data: {
       userId: user1.id,
       otp: '123456',
       expiry: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes from now
+      consumed: false,
+    },
+  });
+
+  // Create sample OTP for user2
+  await prisma.userOtp.create({
+    data: {
+      userId: user2.id,
+      otp: '654321',
+      expiry: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes from now
+      consumed: false,
     },
   });
 

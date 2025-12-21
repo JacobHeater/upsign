@@ -1,4 +1,4 @@
-import { EventInvitation } from 'common/schema';
+import { EventInvitation } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventInvitationRepository extends PrismaRepositoryBase<EventInvitation> {

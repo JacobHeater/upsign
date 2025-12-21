@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { PrismaEventRepository } from '../prisma-event-repository';
-import { Event } from 'common/schema';
+import { Event } from 'common';
 
 const mockUser = {
   id: 'user1',

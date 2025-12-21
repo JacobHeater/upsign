@@ -14,8 +14,10 @@ const segmentRepo = new PrismaEventSegmentRepository();
 const attendeeRepo = new PrismaEventAttendeeRepository();
 
 describe('Event Attendee Router', () => {
-  const token = jwt.sign({ userId: 'test-user' }, JWT_SECRET, { expiresIn: '1h' });
+  const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+  let token: string;
   let userId: string;
+  let attendeeUserId: string;
   let eventId: string;
   let segmentId: string;
   let attendeeId: string;
@@ -25,11 +27,11 @@ describe('Event Attendee Router', () => {
     console.log('Creating user');
     try {
       const user = await userRepo.createAsync({
-        id: 'test-user',
+        id: `test-user-${Date.now()}`,
         firstName: 'Test',
         lastName: 'User',
         allergies: [],
-        email: 'test-attendee@example.com',
+        email: `test-attendee-${Date.now()}@example.com`,
         dateOfBirth: new Date(),
         phoneNumber: `9999999999${Date.now()}`,
         verified: true,
@@ -42,6 +44,7 @@ describe('Event Attendee Router', () => {
         hostedEvents: [],
       } as any);
       userId = user.id;
+      token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
       console.log('User created', userId);
     } catch (e) {
       console.log('User create failed', e);
@@ -52,11 +55,11 @@ describe('Event Attendee Router', () => {
     // Create another user for attendee
     try {
       const attendeeUser = await userRepo.createAsync({
-        id: 'attendee-user',
+        id: `attendee-user-${Date.now()}`,
         firstName: 'Attendee',
         lastName: 'User',
         allergies: [],
-        email: 'attendee@example.com',
+        email: `attendee-${Date.now()}@example.com`,
         dateOfBirth: new Date(),
         phoneNumber: `8888888888${Date.now()}`,
         verified: true,
@@ -68,16 +71,18 @@ describe('Event Attendee Router', () => {
         attendances: [],
         hostedEvents: [],
       } as any);
-      console.log('Attendee user created', attendeeUser.id);
+      attendeeUserId = attendeeUser.id;
+      console.log('Attendee user created', attendeeUserId);
     } catch (e) {
       console.log('Attendee user create failed', e);
+      attendeeUserId = 'attendee-user';
     }
 
     // Create test event
     try {
       const event = await eventRepo.createAsync({
         id: '',
-        name: 'Test Event',
+        name: `Test Event ${Date.now()}`,
         description: 'Test Description',
         date: new Date(),
         hostId: userId,
@@ -99,7 +104,7 @@ describe('Event Attendee Router', () => {
     try {
       const segment = await segmentRepo.createAsync({
         id: '',
-        name: 'Test Segment',
+        name: `Test Segment ${Date.now()}`,
         eventId,
         event: { id: eventId } as any,
         createdAt: new Date(),
@@ -111,23 +116,6 @@ describe('Event Attendee Router', () => {
     } catch (e) {
       console.log('Segment create failed', e);
     }
-
-    // Create test attendee
-    try {
-      const attendee = await attendeeRepo.createAsync({
-        id: '',
-        userId: 'attendee-user',
-        eventId,
-        user: { id: 'attendee-user' } as any,
-        event: { id: eventId } as any,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      attendeeId = attendee.id;
-      console.log('Attendee created', attendeeId);
-    } catch (e) {
-      console.log('Attendee create failed', e);
-    }
   });
 
   describe('POST /api/event-attendee', () => {
@@ -135,9 +123,11 @@ describe('Event Attendee Router', () => {
       const response = await request(app)
         .post('/api/event-attendee')
         .set('Cookie', [`jwt=${token}`])
-        .send({ userId: 'attendee-user', eventId });
+        .send({ userId: attendeeUserId, eventId });
 
       expect(response.status).toBe(201);
+      expect(response.body.data).toHaveProperty('id');
+      attendeeId = response.body.data.id;
     });
   });
 
@@ -166,7 +156,7 @@ describe('Event Attendee Router', () => {
       const response = await request(app)
         .put(`/api/event-attendee/${attendeeId}`)
         .set('Cookie', [`jwt=${token}`])
-        .send({ userId: 'attendee-user', eventId });
+        .send({ userId: attendeeUserId, eventId });
 
       expect(response.status).toBe(200);
     });

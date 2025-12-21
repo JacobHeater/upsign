@@ -1,4 +1,4 @@
-import { EventAttendee } from 'common/schema';
+import { EventAttendee } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventAttendeeRepository extends PrismaRepositoryBase<EventAttendee> {

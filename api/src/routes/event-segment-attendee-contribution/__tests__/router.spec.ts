@@ -16,23 +16,26 @@ const attendeeRepo = new PrismaEventSegmentAttendeeRepository();
 const contributionRepo = new PrismaEventSegmentAttendeeContributionRepository();
 
 describe('Event Segment Attendee Contribution Router', () => {
-  const token = jwt.sign({ userId: 'test-user' }, JWT_SECRET, { expiresIn: '1h' });
+  const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+  let token: string;
   let userId: string;
   let eventId: string;
   let segmentId: string;
   let attendeeId: string;
   let contributionId: string;
+  let itemName: string;
 
   beforeAll(async () => {
+    itemName = `Test Item ${Date.now()}`;
     // Create test user
     console.log('Creating user');
     try {
       const user = await userRepo.createAsync({
-        id: 'test-user',
+        id: `test-user-${Date.now()}`,
         firstName: 'Test',
         lastName: 'User',
         allergies: [],
-        email: 'test-contribution@example.com',
+        email: `test-contribution-${Date.now()}@example.com`,
         dateOfBirth: new Date(),
         phoneNumber: `9999999999${Date.now()}`,
         verified: true,
@@ -45,6 +48,7 @@ describe('Event Segment Attendee Contribution Router', () => {
         hostedEvents: [],
       } as any);
       userId = user.id;
+      token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
       console.log('User created', userId);
     } catch (e) {
       console.log('User create failed', e);
@@ -57,7 +61,7 @@ describe('Event Segment Attendee Contribution Router', () => {
     try {
       const event = await eventRepo.createAsync({
         id: '',
-        name: 'Test Event',
+        name: `Test Event ${Date.now()}`,
         description: 'Test Description',
         date: new Date(),
         hostId: userId,
@@ -81,7 +85,7 @@ describe('Event Segment Attendee Contribution Router', () => {
     try {
       const segment = await segmentRepo.createAsync({
         id: '',
-        name: 'Test Segment',
+        name: `Test Segment ${Date.now()}`,
         eventId,
         event: { id: eventId } as any,
         createdAt: new Date(),
@@ -114,26 +118,6 @@ describe('Event Segment Attendee Contribution Router', () => {
       console.log('Attendee create failed', e);
       attendeeId = 'test-attendee';
     }
-
-    // Create test contribution
-    console.log('Creating contribution');
-    try {
-      const contribution = await contributionRepo.createAsync({
-        id: '',
-        item: 'Test Item',
-        description: 'Test Description',
-        quantity: 1,
-        eventSegmentAttendeeId: attendeeId,
-        eventSegmentAttendee: { id: attendeeId } as any,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      contributionId = contribution.id;
-      console.log('Contribution created', contributionId);
-    } catch (e) {
-      console.log('Contribution create failed', e);
-      contributionId = 'test-contribution';
-    }
   });
 
   describe('POST /api/event-segment-attendee-contribution', () => {
@@ -142,7 +126,7 @@ describe('Event Segment Attendee Contribution Router', () => {
         .post('/api/event-segment-attendee-contribution')
         .set('Cookie', [`jwt=${token}`])
         .send({
-          item: 'Test Item',
+          item: itemName,
           description: 'Test Description',
           quantity: 1,
           eventSegmentAttendeeId: attendeeId,
@@ -151,7 +135,7 @@ describe('Event Segment Attendee Contribution Router', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('id');
-      expect(response.body.data.item).toBe('Test Item');
+      expect(response.body.data.item).toBe(itemName);
       contributionId = response.body.data.id;
     });
   });

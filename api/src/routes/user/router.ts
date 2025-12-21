@@ -24,12 +24,6 @@ router.get('/me', async (req: AuthRequest, res) => {
   }
 });
 
-router.post('/', (req, res) => {
-  // Handle user creation
-  const response: IApiResponse<null> = { success: true };
-  res.status(201).json(response);
-});
-
 router.get('/:id', async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
@@ -49,10 +43,11 @@ router.get('/:id', async (req: AuthRequest, res) => {
   }
 });
 
-router.get('/', (req, res) => {
-  // Handle fetching all users
-  const response: IApiResponse<null> = { success: true };
-  res.status(200).json(response);
+router.get('/', async (req, res) => {
+  const userRepository = new PrismaUserRepository();
+  const users = await userRepository.getAllAsync();
+  const response: IApiResponse<typeof users> = { success: true, data: users };
+  res.json(response);
 });
 
 router.put('/:id', async (req: AuthRequest, res) => {

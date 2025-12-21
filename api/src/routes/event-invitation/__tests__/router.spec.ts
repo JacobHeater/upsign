@@ -7,7 +7,7 @@ import { PrismaEventInvitationRepository } from '../../../repositories/events/pr
 import { PrismaEventAttendeeRepository } from '../../../repositories/events/prisma-event-attendee-repository';
 import { PrismaEventSegmentAttendeeRepository } from '../../../repositories/events/prisma-event-segment-attendee-repository';
 import { PrismaEventSegmentRepository } from '../../../repositories/events/prisma-event-segment-repository';
-import { RsvpStatus } from 'common/schema';
+import { RsvpStatus } from 'common';
 import { describe, beforeAll, afterAll, it, expect } from '@jest/globals';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';

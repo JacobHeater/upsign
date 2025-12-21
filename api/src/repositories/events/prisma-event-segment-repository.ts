@@ -1,4 +1,4 @@
-import { EventSegment } from 'common/schema';
+import { EventSegment } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventSegmentRepository extends PrismaRepositoryBase<EventSegment> {

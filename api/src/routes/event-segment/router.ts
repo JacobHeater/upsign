@@ -3,6 +3,7 @@ import { IApiResponse } from '../../http/response/response';
 import { PrismaEventSegmentRepository } from '../../repositories/events/prisma-event-segment-repository';
 import { PrismaEventRepository } from '../../repositories/events/prisma-event-repository';
 import logger from '../../utils/logger';
+import socketManager from '../../socket';
 
 const eventSegmentRepo = new PrismaEventSegmentRepository();
 const eventRepo = new PrismaEventRepository();
@@ -49,6 +50,13 @@ router.post('/', async (req, res) => {
       eventId,
       userId: (req as any).user?.userId,
     });
+
+    // Emit event updated
+    const updatedEvent = await eventRepo.getByIdAsync(eventId);
+    if (updatedEvent) {
+      socketManager.emitToEvent(eventId, 'event-updated', updatedEvent);
+    }
+
     const response: IApiResponse<any> = {
       success: true,
       data: eventSegment,
@@ -149,6 +157,13 @@ router.put('/:id', async (req, res) => {
       };
       return res.status(404).json(response);
     }
+
+    // Emit event updated
+    const updatedEvent = await eventRepo.getByIdAsync(eventId);
+    if (updatedEvent) {
+      socketManager.emitToEvent(eventId, 'event-updated', updatedEvent);
+    }
+
     const response: IApiResponse<any> = {
       success: true,
       data: eventSegment,
@@ -190,6 +205,13 @@ router.delete('/:id', async (req, res) => {
       };
       return res.status(404).json(response);
     }
+
+    // Emit event updated
+    const updatedEvent = await eventRepo.getByIdAsync(existingSegment.eventId);
+    if (updatedEvent) {
+      socketManager.emitToEvent(existingSegment.eventId, 'event-updated', updatedEvent);
+    }
+
     res.status(204).send();
   } catch (error) {
     const response: IApiResponse<null> = {

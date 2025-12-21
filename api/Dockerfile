@@ -1,13 +1,21 @@
-FROM node:18-alpine
+FROM node:20-alpine
+
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ../common ./common
+
+RUN cd ./common && npm ci && npm run build
+
+COPY ./api ./api
+
+WORKDIR /app/api
+
+RUN ls -la
 
 RUN npm ci
-
-COPY . .
-
 RUN npm run build
 
 RUN npm prune --production

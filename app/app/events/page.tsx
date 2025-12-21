@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Card, Toggle, Tooltip, Icon } from '@/components/design-system';
+import { Button, Card, Toggle, Tooltip, Icon, Tag } from '@/components/design-system';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import type { Event, EventInvitation, RsvpStatus, User } from 'common/schema';
@@ -16,15 +16,15 @@ export default function EventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [mineOnly, setMineOnly] = useState(false);
+  const [showPastEvents, setShowPastEvents] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { refreshPendingInvitations } = usePendingInvitations();
   const socket = useSocket();
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [showPastEvents]);
 
-  // Socket listener for real-time invitations
   useEffect(() => {
     if (!socket) return;
 
@@ -32,16 +32,11 @@ export default function EventsPage() {
       try {
         console.log('Received new invitation via socket:', invitation.id);
 
-        // Fetch the full invitation data
         const fullInvitation = await apiClient.getEventInvitation(invitation.id);
-
-        // Fetch the associated event data
         const event = await apiClient.getEvent(fullInvitation.eventId);
 
-        // Add the new invitation to the state
         setInvitations(prev => [{ ...fullInvitation, event }, ...prev]);
 
-        // Refresh the pending invitations count in the header
         refreshPendingInvitations();
       } catch (error) {
         console.error('Failed to process received invitation:', error);
@@ -58,7 +53,7 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     try {
       const [eventsData, invitationsData, userData] = await Promise.all([
-        apiClient.getEvents(),
+        apiClient.getEvents({ includePast: showPastEvents }),
         apiClient.getEventInvitations('received').catch(() => []), // If not logged in, empty array
         apiClient.getCurrentUser().catch(() => null), // If not logged in, null
       ]);
@@ -128,15 +123,21 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto mt-8 px-4">
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-6xl mx-auto mt-8 px-4 mb-12 md:mb-8">
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-6">
         <h1 className="text-2xl font-bold text-foreground">Events</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center gap-4">
           {currentUser && events.length > 0 && (
-            <label className="flex items-center gap-2 text-sm cursor-pointer text-foreground">
-              <Toggle checked={mineOnly} onChange={(v) => setMineOnly(v)} />
-              <span>Mine only</span>
-            </label>
+            <>
+              <label className="flex items-center gap-2 text-sm cursor-pointer text-foreground">
+                <Toggle checked={showPastEvents} onChange={(v) => setShowPastEvents(v)} />
+                <span>Show past events</span>
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer text-foreground">
+                <Toggle checked={mineOnly} onChange={(v) => setMineOnly(v)} />
+                <span>Mine only</span>
+              </label>
+            </>
           )}
           <Button href="/events/create" className="px-4 py-2">➕ Create Event</Button>
         </div>
@@ -253,7 +254,7 @@ export default function EventsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pb-48 md:pb-8">
           {displayedEvents.map((event: Event) => (
             <Card
               key={event.id}
@@ -263,8 +264,13 @@ export default function EventsPage() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="text-4xl mb-2">{event.icon}</div>
-                <div className="text-xs bg-secondary text-foreground px-3 py-1 rounded-full font-bold shadow-md border-2 border-secondary">
-                  {event.segments.length} segment{event.segments.length !== 1 ? 's' : ''}
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs bg-secondary text-foreground px-3 py-1 rounded-full font-bold shadow-md border-2 border-secondary">
+                    {event.segments.length} segment{event.segments.length !== 1 ? 's' : ''}
+                  </div>
+                  {event.cancelled && (
+                    <Tag variant="danger" size="sm" className='text-center justify-center'>Cancelled</Tag>
+                  )}
                 </div>
               </div>
               <h2 className="text-xl font-bold text-card-foreground mb-3 group-hover:text-primary transition-colors">

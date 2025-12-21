@@ -1,9 +1,10 @@
-import { Event } from 'common/schema';
+import { Event } from 'common';
 import { Router } from 'express';
 import { IApiResponse } from '../../http/response/response';
 import logger from '../../utils/logger';
 import { PrismaEventRepository } from '../../repositories/events/prisma-event-repository';
 import { PrismaEventInvitationRepository } from '../../repositories/events/prisma-event-invitation-repository';
+import socketManager from '../../socket';
 
 const eventRepo = new PrismaEventRepository();
 const eventInvitationRepo = new PrismaEventInvitationRepository();
@@ -109,7 +110,16 @@ router.get('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const userId = (req as any).user.userId;
-    const events = await eventRepo.getEventsForUserAsync(userId);
+    const includePast = req.query.includePast === 'true' || req.query.past === 'true';
+
+    let events = await eventRepo.getEventsForUserAsync(userId);
+
+    // Filter out past events unless explicitly requested
+    if (!includePast) {
+      const now = new Date();
+      events = events.filter((event) => new Date(event.date) >= now);
+    }
+
     const response: IApiResponse<any[]> = {
       success: true,
       data: events,
@@ -128,7 +138,7 @@ router.get('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, date, location, icon } = req.body;
+    const { name, description, date, location, icon, cancelled } = req.body;
     if (!name || !description || !date || !location) {
       const response: IApiResponse<null> = {
         success: false,
@@ -137,7 +147,7 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json(response);
     }
     const hostId = (req as any).user.userId;
-    const eventData: Event = {
+    const eventData: Omit<Event, 'createdAt' | 'updatedAt' | 'segments' | 'attendees'> = {
       id,
       name,
       description,
@@ -146,10 +156,7 @@ router.put('/:id', async (req, res) => {
       host: { id: hostId } as any,
       location,
       icon: icon || '🎉',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      segments: [],
-      attendees: [],
+      cancelled: cancelled || false,
     };
     const event = await eventRepo.updateAsync(id, eventData);
     if (!event) {
@@ -159,6 +166,10 @@ router.put('/:id', async (req, res) => {
       };
       return res.status(404).json(response);
     }
+
+    // Emit socket event for event updated
+    socketManager.emitToEvent(id, 'event-updated', event);
+
     const response: IApiResponse<any> = {
       success: true,
       data: event,

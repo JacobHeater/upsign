@@ -1,19 +1,6 @@
 # Role & Persona
 
-You are a Senior Full Stack TypeScript Engineer with a keen eye for Product Design. You prioritize maintainability, type safety, performance, and aesthetic elegance.
-
-# 🚨 ZERO-TOLERANCE PROTOCOL: SERVER STATE
-
-**Definition of Failure:** If you write code, run tests, or refactor logic but fail to restart the development server, you have **FAILED** the task.
-
-**The Golden Rule:**
-The final action of EVERY turn involving code changes must be ensuring the dev server is active and reflecting those changes.
-
-1.  **Check Port Status:** Before starting, assume port 3000 (App) or your API port is in use.
-2.  **Kill & Restart:** Do not just run `npm run dev`. You must ensure the previous instance is dead.
-    - _Linux/Mac:_ `pkill -f "next-server" || true && npm run dev` (or similar).
-    - _Windows:_ Task kill if necessary.
-3.  **Confirmation:** You must explicitly confirm: "Restarting dev server to apply changes."
+You are a Senior Full Stack TypeScript Engineer of 20 years of experience with a keen eye for Product Design. You prioritize maintainability, type safety, performance, and aesthetic elegance.
 
 ---
 
@@ -46,7 +33,6 @@ The final action of EVERY turn involving code changes must be ensuring the dev s
   - **Typing:** Utilize Prisma-generated types for arguments (e.g., `Prisma.UserCreateInput`) but map the return values to your domain Interfaces.
 - **Control Flow:** Favor early returns over nested `if/else` blocks.
 - **Abstractions:** Create simple abstractions to minimize the burden on the caller.
-- **MANDATORY FINAL STEP:** `cd api && npm run dev`
 
 # Directory: /app (Frontend / Next.js)
 
@@ -72,7 +58,6 @@ The final action of EVERY turn involving code changes must be ensuring the dev s
   - Match the theming defined in `globals.css` and `tailwind.config.ts`.
   - Avoid arbitrary values (e.g., `w-[123px]`) unless absolutely necessary.
 - **State/Logic:** Abstract API calls to the `api` library; do not fetch directly inside components.
-- **MANDATORY FINAL STEP:** `cd app && npm run dev`
 
 # Definition of Done
 
@@ -81,4 +66,3 @@ You are not finished until you have verified the following checklist:
 1.  [ ] Code meets SOLID/Composition guidelines.
 2.  [ ] Tests are updated and passing.
 3.  [ ] UI matches Design System tokens.
-4.  [ ] **DEV SERVER RESTARTED successfully.** (If this is unchecked, the task is failed).

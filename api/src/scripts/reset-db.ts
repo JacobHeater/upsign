@@ -8,6 +8,9 @@ async function resetDatabase() {
     await prisma.eventSegmentAttendeeContribution.deleteMany();
     await prisma.eventSegmentAttendee.deleteMany();
     await prisma.eventSegment.deleteMany();
+    await prisma.eventChatMessageReaction.deleteMany();
+    await prisma.eventChatMessage.deleteMany();
+    await prisma.eventAttendee.deleteMany();
     await prisma.eventInvitation.deleteMany();
     await prisma.event.deleteMany();
     await prisma.userOtp.deleteMany();

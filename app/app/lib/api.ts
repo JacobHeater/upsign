@@ -6,13 +6,15 @@ import type {
   EventSegmentAttendee,
   EventSegmentAttendeeContribution,
   EventInvitation,
+  EventChatMessage,
+  EventChatMessageReaction,
 } from 'common/schema';
 
 class ApiClient {
-  private baseUrl: string;
-
-  constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL!;
+  private get baseUrl(): string {
+    return typeof window !== 'undefined'
+      ? `${window.location.origin.replace(/:\d+$/, '')}:3002`
+      : 'http://localhost:3002';
   }
 
   private isIsoDateString(value: string): boolean {
@@ -123,8 +125,12 @@ class ApiClient {
   }
 
   // Event routes
-  async getEvents() {
-    return this.request<Event[]>('/api/event');
+  async getEvents(options?: { includePast?: boolean }) {
+    let url = '/api/event';
+    if (options?.includePast) {
+      url += '?includePast=true';
+    }
+    return this.request<Event[]>(url);
   }
 
   async getEvent(id: string) {
@@ -341,6 +347,45 @@ class ApiClient {
 
   async getCurrentUser() {
     return this.request<User>('/api/user/me');
+  }
+
+  // Event Chat Message routes
+  async getEventChatMessages(eventId: string) {
+    return this.request<EventChatMessage[]>(`/api/event-chat-message?eventId=${eventId}`);
+  }
+
+  async createEventChatMessage(message: { eventId: string; message: string }) {
+    return this.request<EventChatMessage>('/api/event-chat-message', {
+      method: 'POST',
+      body: JSON.stringify(message),
+    });
+  }
+
+  async updateEventChatMessage(id: string, message: { message: string }) {
+    return this.request<EventChatMessage>(`/api/event-chat-message/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(message),
+    });
+  }
+
+  // Event Chat Message Reaction routes
+  async getEventChatMessageReactions(messageId: string) {
+    return this.request<EventChatMessageReaction[]>(
+      `/api/event-chat-message-reaction?messageId=${messageId}`
+    );
+  }
+
+  async createEventChatMessageReaction(reaction: { messageId: string; reaction: string }) {
+    return this.request<EventChatMessageReaction>('/api/event-chat-message-reaction', {
+      method: 'POST',
+      body: JSON.stringify(reaction),
+    });
+  }
+
+  async deleteEventChatMessageReaction(id: string) {
+    return this.request<void>(`/api/event-chat-message-reaction/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   async logout() {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { PrismaEventSegmentRepository } from '../prisma-event-segment-repository';
-import { EventSegment } from 'common/schema';
+import { EventSegment } from 'common';
 
 const mockEventSegmentFindUnique = jest.fn();
 const mockEventSegmentFindMany = jest.fn();

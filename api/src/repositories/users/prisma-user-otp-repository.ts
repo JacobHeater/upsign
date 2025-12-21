@@ -1,4 +1,4 @@
-import { UserOtp } from 'common/schema';
+import { UserOtp } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaUserOtpRepository extends PrismaRepositoryBase<UserOtp> {
@@ -56,6 +56,7 @@ export class PrismaUserOtpRepository extends PrismaRepositoryBase<UserOtp> {
         userId,
         otp,
         expiry,
+        consumed: false,
       },
       include: {
         user: true,

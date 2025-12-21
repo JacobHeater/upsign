@@ -22,10 +22,12 @@ import {
     MdSend,
     MdChat,
     MdKeyboardArrowDown,
+    MdThumbUp,
+    MdMood,
 } from 'react-icons/md';
 
 interface IconProps {
-    name: 'eye' | 'edit' | 'plus' | 'calendar' | 'location' | 'crown' | 'users' | 'envelope' | 'question' | 'check' | 'trash' | 'logout' | 'home' | 'user' | 'leave' | 'document' | 'close' | 'arrowBack' | 'decline' | 'arrowForward' | 'send' | 'chat' | 'chevronDown';
+    name: 'eye' | 'edit' | 'plus' | 'calendar' | 'location' | 'crown' | 'users' | 'envelope' | 'question' | 'check' | 'trash' | 'logout' | 'home' | 'user' | 'leave' | 'document' | 'close' | 'arrowBack' | 'decline' | 'arrowForward' | 'send' | 'chat' | 'chevronDown' | 'thumbsUp' | 'smile' | 'plus-smile';
     className?: string;
     size?: number;
     text?: string;
@@ -55,9 +57,20 @@ const icons = {
     send: MdSend,
     chat: MdChat,
     chevronDown: MdKeyboardArrowDown,
+    thumbsUp: MdThumbUp,
+    smile: MdMood,
 };
 
 export function Icon({ name, className = '', size = 24, text }: IconProps) {
+    if (name === 'plus-smile') {
+        return (
+            <span className={`inline-flex items-center justify-center align-middle gap-1 ${className}`}>
+                <MdAdd size={size} />
+                <MdMood size={size} />
+                {text && <span className="text-sm font-medium leading-none">{text}</span>}
+            </span>
+        );
+    }
     const IconComponent = icons[name];
     return (
         <span className={`inline-flex items-center justify-center align-middle gap-2 ${className}`}>

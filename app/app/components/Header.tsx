@@ -6,6 +6,7 @@ import { Button, Icon, Tooltip } from '@/components/design-system';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { usePendingInvitations } from '@/lib/use-pending-invitations';
+import Image from 'next/image';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,6 +27,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 hover:scale-105 transition-transform group flex items-center gap-2">
             <h1 className="text-2xl font-bold text-primary-50">
+              <Image src="/favicon.ico" alt="UpSign Logo" width={32} height={32} className="inline-block mr-2" />
               UpSign
             </h1>
           </Link>
@@ -95,14 +97,14 @@ export default function Header() {
       {/* Mobile Navigation */}
       <div className={`md:hidden border-t-2 border-primary-900 bg-background backdrop-blur-sm overflow-hidden transition-all duration-300 ease-in-out shadow-xl ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}>
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          <Button href="/" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+        <div className="px-2 pt-2 pb-3 space-y-2">
+          <Button href="/" variant="ghost" className="w-full justify-start py-3" onClick={() => setIsMobileMenuOpen(false)}>
             <Icon name="home" size={18} className="mr-3" />
             Home
           </Button>
           {user && (
             <>
-              <Button href="/events" variant="ghost" className="w-full justify-start relative" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button href="/events" variant="ghost" className="w-full justify-start relative py-3" onClick={() => setIsMobileMenuOpen(false)}>
                 <Icon name="calendar" size={18} className="mr-3" />
                 Events
                 {pendingCount > 0 && (
@@ -113,18 +115,18 @@ export default function Header() {
                   </Tooltip>
                 )}
               </Button>
-              <Button href="/account" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button href="/account" variant="ghost" className="w-full justify-start py-3" onClick={() => setIsMobileMenuOpen(false)}>
                 <Icon name="user" size={18} className="mr-3" />
                 Account
               </Button>
-              <Button onClick={handleLogout} variant="ghost" className="w-full justify-start">
+              <Button onClick={handleLogout} variant="ghost" className="w-full justify-start py-3">
                 <Icon name="logout" size={18} className="mr-3" />
                 Logout
               </Button>
             </>
           )}
           {!user && (
-            <Button href="/account/login" variant="ghost" className="w-full justify-start" onClick={() => setIsMobileMenuOpen(false)}>
+            <Button href="/account/login" variant="ghost" className="w-full justify-start py-3" onClick={() => setIsMobileMenuOpen(false)}>
               <Icon name="user" size={18} className="mr-3" />
               Login
             </Button>

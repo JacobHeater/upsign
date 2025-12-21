@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { PrismaEventInvitationRepository } from '../prisma-event-invitation-repository';
-import { EventInvitation, RsvpStatus } from 'common/schema';
+import { EventInvitation, RsvpStatus } from 'common';
 
 const mockUser = {
   id: 'user1',
@@ -295,8 +295,8 @@ describe('PrismaEventInvitationRepository', () => {
           eventId: 'event1',
           message: 'Updated message',
           viewed: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
           rsvpStatus: 'Accepted',
         },
         include: {

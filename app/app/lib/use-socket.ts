@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 export const useSocket = () => {
@@ -18,7 +18,10 @@ export const useSocket = () => {
       return;
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
+    const apiUrl =
+      typeof window !== 'undefined'
+        ? `${window.location.origin.replace(/:\d+$/, '')}:3002`
+        : 'http://localhost:3002';
 
     console.log('Connecting to socket.io server at', apiUrl);
     const newSocket = io(apiUrl, {
@@ -59,4 +62,45 @@ export const useSocket = () => {
   }, []);
 
   return socket;
+};
+
+// Higher-level hook for event rooms
+export const useEventRoom = (eventId: string) => {
+  const socket = useSocket();
+  const [isConnected, setIsConnected] = useState(false);
+  const [eventData, setEventData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!socket || !eventId) return;
+
+    console.log('Joining event room:', eventId);
+    socket.emit('join-event', eventId);
+    setIsConnected(true);
+
+    // Listen for event updates
+    const handleEventUpdated = (data: any) => {
+      console.log('Event updated:', data);
+      setEventData(data);
+    };
+
+    socket.on('event-updated', handleEventUpdated);
+
+    return () => {
+      console.log('Leaving event room:', eventId);
+      socket.emit('leave-event', eventId);
+      socket.off('event-updated', handleEventUpdated);
+      setIsConnected(false);
+    };
+  }, [socket, eventId]);
+
+  const emitEvent = useCallback(
+    (event: string, data: any) => {
+      if (socket) {
+        socket.emit(event, data);
+      }
+    },
+    [socket]
+  );
+
+  return { socket, isConnected, eventData, emitEvent };
 };

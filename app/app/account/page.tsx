@@ -49,7 +49,7 @@ export default function AccountPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-background-secondary flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-accent mx-auto mb-4"></div>
                     <p className="text-foreground text-lg">Loading your account...</p>
@@ -60,14 +60,14 @@ export default function AccountPage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="min-h-screen bg-background-secondary flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto px-6">
                     <div className="text-6xl mb-4">🔒</div>
                     <h1 className="text-2xl font-bold text-foreground mb-4">Access Denied</h1>
                     <p className="text-foreground/80 mb-6">
                         You need to be logged in to view your account information.
                     </p>
-                    <Button href="/account/login" variant="accent" className="px-6 py-3">Go to Login</Button>
+                    <Button href="/account/login" variant="primary" className="px-6 py-3">Go to Login</Button>
                 </div>
             </div>
         );
@@ -215,13 +215,6 @@ export default function AccountPage() {
                                 <Button onClick={() => router.push('/events/create')} className="glass-action-btn glass-action-primary w-full px-5 py-4 text-left">➕ Create Event</Button>
                                 <Button onClick={handleLogout} variant="accent" className="glass-action-btn glass-action-muted w-full px-5 py-4 text-left">🚪 Logout</Button>
                             </div>
-                        </Card>
-
-                        <Card className="rounded-xl p-6" size="sm" hoverEffect="none">
-                            <h3 className="text-xl font-bold text-foreground mb-3">⚙️ Account Settings</h3>
-                            <p className="text-foreground text-sm">
-                                Need to update your information? Contact support for account modifications.
-                            </p>
                         </Card>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import { EventSegmentAttendeeContribution } from 'common/schema';
+import { EventSegmentAttendeeContribution } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 
 export class PrismaEventSegmentAttendeeContributionRepository extends PrismaRepositoryBase<EventSegmentAttendeeContribution> {

@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 
 interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
-    variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'destructive' | 'glass';
+    variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'destructive' | 'glass' | 'danger';
     size?: 'sm' | 'md' | 'lg';
     children: React.ReactNode;
 }
@@ -52,6 +52,7 @@ export function Tag({
         accent: 'border-accent/30',
         destructive: 'border-destructive/30',
         glass: 'border-white/20',
+        danger: 'bg-destructive-500 text-destructive-foreground border-destructive-500',
     }[variant];
 
     const glassStyle: React.CSSProperties = variant === 'glass' ? {
@@ -60,6 +61,11 @@ export function Tag({
         WebkitBackdropFilter: 'blur(12px) saturate(150%)',
         backdropFilter: 'blur(12px) saturate(150%)',
         boxShadow: '0 4px 16px rgba(2, 6, 23, 0.12), inset 0 -2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+    } : variant === 'danger' ? {
+        background: 'var(--destructive-500)',
+        border: '1px solid var(--destructive-500)',
+        boxShadow: '0 2px 8px rgba(211, 47, 47, 0.3)',
+        color: 'var(--destructive-foreground)',
     } : {
         background: bgGradient,
         border: '1px solid rgba(255, 255, 255, 0.12)',
@@ -70,7 +76,9 @@ export function Tag({
 
     const sheenBg = variant === 'glass'
         ? 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 40%, transparent 60%)'
-        : 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), rgba(255,255,255,0.05) 40%, transparent 60%)';
+        : variant === 'danger'
+            ? 'transparent'
+            : 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15), rgba(255,255,255,0.05) 40%, transparent 60%)';
 
     return (
         <span

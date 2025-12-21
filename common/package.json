@@ -1,19 +1,14 @@
 {
     "name": "common",
     "private": true,
+    "type": "commonjs",
     "version": "1.0.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./src/index.ts",
-            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
-        },
-        "./schema": {
-            "default": "./dist/schema/index.js",
-            "import": "./dist/schema/index.js",
-            "types": "./dist/schema/index.d.ts"
         }
     },
     "scripts": {
@@ -24,5 +19,8 @@
         "@types/node": "^20.10.5",
         "prettier": "^3.7.4",
         "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "reflect-metadata": "^0.2.2"
     }
 }

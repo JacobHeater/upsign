@@ -8,10 +8,13 @@ interface CardProps extends React.HTMLAttributes<HTMLElement> {
     hoverEffect?: 'scale' | 'lift' | 'none';
 }
 
-export function Card({ as = 'div', className = '', children, size = 'md', hoverEffect = 'none', style, ...rest }: CardProps) {
+export const Card = React.forwardRef<any, CardProps>(function Card({ as = 'div', className = '', children, size = 'md', hoverEffect = 'none', style, ...rest }, ref) {
     const Comp = as;
     const [bgGradient, setBgGradient] = useState('linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))');
-    const cardRef = useRef<HTMLElement>(null);
+    const cardRef = useRef<any>(null);
+
+    // Use the provided ref or the internal ref
+    const combinedRef = (ref as React.Ref<any>) || cardRef;
 
     useEffect(() => {
         if (cardRef.current) {
@@ -61,7 +64,7 @@ export function Card({ as = 'div', className = '', children, size = 'md', hoverE
 
     return (
         <Comp
-            ref={cardRef as any}
+            ref={combinedRef}
             className={`${base} ${className}`.trim()}
             style={{ ...glassStyle, ...style }}
             {...rest}
@@ -91,7 +94,7 @@ export function Card({ as = 'div', className = '', children, size = 'md', hoverE
             <div className="relative z-10">{children}</div>
         </Comp>
     );
-}
+});
 
 export default Card;
 

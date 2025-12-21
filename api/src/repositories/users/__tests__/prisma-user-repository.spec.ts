@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { PrismaUserRepository } from '../prisma-user-repository';
-import { User } from 'common/schema';
+import { User } from 'common';
 
 const mockUserFindUnique = jest.fn();
 const mockUserFindMany = jest.fn();

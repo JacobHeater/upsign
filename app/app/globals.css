@@ -58,6 +58,7 @@
   --color-destructive-700: var(--destructive-700);
   --color-destructive-800: var(--destructive-800);
   --color-destructive-900: var(--destructive-900);
+  --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -136,4 +137,8 @@
   --input: #ffffff;
   --ring: #ff7d00;
   --gray: #275848;
+}
+
+.devtools-indicator {
+  display: none;
 }

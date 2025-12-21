@@ -18,7 +18,7 @@ function LoginForm() {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ function LoginForm() {
       await apiClient.sendOtp(phone);
       setStep('otp');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err as Error);
     } finally {
       setIsSubmitting(false);
     }
@@ -46,7 +46,7 @@ function LoginForm() {
       // Redirect to home or events page
       router.push(returnUrl);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err as Error);
     } finally {
       setIsSubmitting(false);
     }
@@ -80,7 +80,7 @@ function LoginForm() {
 
             {error && (
               <div className="p-3 bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-lg text-sm">
-                {error}
+                {error?.toString()}
               </div>
             )}
 
@@ -92,12 +92,12 @@ function LoginForm() {
               <label htmlFor="otp" className="block text-sm font-medium text-foreground mb-2">
                 🔐 OTP Code
               </label>
-              <Input type="number" id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
+              <Input type="number" inputMode='numeric' id="otp" value={otp} onChange={(e: any) => setOtp(e.target.value)} required placeholder="Enter the 6-digit code" className="w-full" />
             </div>
 
             {error && (
               <div className="p-3 bg-destructive/10 border-2 border-destructive/30 text-destructive rounded-lg text-sm">
-                {error}
+                {error?.toString()}
               </div>
             )}
 

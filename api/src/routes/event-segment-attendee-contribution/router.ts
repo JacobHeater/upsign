@@ -1,4 +1,4 @@
-import { EventSegmentAttendeeContribution } from 'common/schema';
+import { EventSegmentAttendeeContribution } from 'common';
 import { Router } from 'express';
 import { IApiResponse } from '../../http/response/response';
 import logger from '../../utils/logger';

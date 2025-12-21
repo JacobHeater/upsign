@@ -1,4 +1,4 @@
-import { User } from 'common/schema';
+import { User } from 'common';
 import { PrismaRepositoryBase } from '../prisma-repository-base';
 import logger from '../../utils/logger';
 
@@ -31,7 +31,7 @@ export class PrismaUserRepository extends PrismaRepositoryBase<User> {
         receivedInvitations: { include: { sender: true, recipient: true } },
       },
     });
-    return users.map(this.mapToUser);
+    return users.map((user) => this.mapToUser(user));
   }
 
   async createAsync(item: User): Promise<User> {

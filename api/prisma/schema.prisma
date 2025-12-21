@@ -7,106 +7,152 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 model User {
-  id            String   @id @default(uuid())
-  firstName     String
-  lastName      String
-  email         String   @unique
-  dateOfBirth   DateTime
-  phoneNumber   String   @unique
-  verified      Boolean  @default(false)
-  locked        Boolean  @default(false)
-  lastLogin     DateTime?
-
-  allergies     UserAllergy[]
-  otps          UserOtp[]
-  hostedEvents  Event[]
-  sentInvitations    EventInvitation[] @relation("SentInvitations")
-  receivedInvitations EventInvitation[] @relation("ReceivedInvitations")
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  firstName   String
+  lastName    String
+  email       String   @unique
+  dateOfBirth DateTime
+  phoneNumber String   @unique
+  verified    Boolean
+  locked      Boolean
+  lastLogin   DateTime?
+  allergies   UserAllergy[]
+  otps        UserOtp[]
   attendances EventAttendee[]
   segmentAttendances EventSegmentAttendee[]
+  hostedEvents Event[]
+  sentInvitations EventInvitation[] @relation("Sender")
+  receivedInvitations EventInvitation[] @relation("Recipient")
+  chatMessages EventChatMessage[]
+  reactions EventChatMessageReaction[]
 }
 
 model UserAllergy {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  allergy String
+  id       String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId   String
+  allergy  String
+  user     User @relation(fields: [userId], references: [id])
+  @@unique([userId, allergy])
 }
 
 model UserOtp {
-  id       String   @id @default(uuid())
+  id       String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User @relation(fields: [userId], references: [id])
   otp      String
   expiry   DateTime
-
-  @@unique([userId, otp])
+  consumed Boolean
 }
 
 model Event {
-  id        String   @id @default(uuid())
-  name      String
+  id          String @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
   description String
-  date      DateTime
-  icon      String
-  hostId    String
-  host      User     @relation(fields: [hostId], references: [id])
-  location  String
-  segments  EventSegment[]
+  date        DateTime
+  icon        String
+  hostId      String
+  host        User @relation(fields: [hostId], references: [id])
+  location    String
+  cancelled   Boolean @default(false)
+  segments    EventSegment[]
+  attendees   EventAttendee[]
   invitations EventInvitation[]
-  attendees EventAttendee[]
+  chatMessages EventChatMessage[]
 }
 
-model EventAttendee {
-  id      String @id @default(uuid())
-  userId  String
-  eventId String
+model EventChatMessage {
+  id        String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  eventId   String
+  event     Event @relation(fields: [eventId], references: [id])
+  message   String
+  reactions EventChatMessageReaction[]
+}
 
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+model EventChatMessageReaction {
+  id        String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messageId String
+  message   EventChatMessage @relation(fields: [messageId], references: [id])
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  reaction  String
+  @@unique([messageId, userId, reaction])
 }
 
 model EventSegment {
-  id        String   @id @default(uuid())
+  id        String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   name      String
   eventId   String
-  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event     Event @relation(fields: [eventId], references: [id])
   attendees EventSegmentAttendee[]
-}
-
-model EventSegmentAttendee {
-  id           String   @id @default(uuid())
-  userId       String
-  segmentId    String
-
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  segment      EventSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
-  contributions EventSegmentAttendeeContribution[]
-}
-
-model EventSegmentAttendeeContribution {
-  id          String   @id @default(uuid())
-  item        String
-  description String
-  quantity    Int
-  eventSegmentAttendeeId  String
-
-  eventSegmentAttendee    EventSegmentAttendee @relation(fields: [eventSegmentAttendeeId], references: [id], onDelete: Cascade)
+  @@unique([eventId, name])
 }
 
 model EventInvitation {
-  id          String   @id @default(uuid())
+  id          String @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   senderId    String
-  sender      User     @relation("SentInvitations", fields: [senderId], references: [id])
+  sender      User @relation("Sender", fields: [senderId], references: [id])
   recipientId String
-  recipient   User     @relation("ReceivedInvitations", fields: [recipientId], references: [id])
+  recipient   User @relation("Recipient", fields: [recipientId], references: [id])
   eventId     String
-  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event       Event @relation(fields: [eventId], references: [id])
   message     String
-  viewed      Boolean  @default(false)
-  rsvpStatus  String   @default("Pending")
+  viewed      Boolean
+  rsvpStatus  String
+}
+
+model EventAttendee {
+  id      String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId  String
+  eventId String
+  user    User @relation(fields: [userId], references: [id])
+  event   Event @relation(fields: [eventId], references: [id])
+  @@unique([userId, eventId])
+}
+
+model EventSegmentAttendee {
+  id            String @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String
+  user          User @relation(fields: [userId], references: [id])
+  segmentId     String
+  segment       EventSegment @relation(fields: [segmentId], references: [id])
+  contributions EventSegmentAttendeeContribution[]
+  @@unique([userId, segmentId])
+}
+
+model EventSegmentAttendeeContribution {
+  id                      String @id @default(cuid())
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  item                    String
+  description             String
+  quantity                Int
+  eventSegmentAttendeeId  String
+  eventSegmentAttendee    EventSegmentAttendee @relation(fields: [eventSegmentAttendeeId], references: [id])
+  @@unique([eventSegmentAttendeeId, item])
 }
